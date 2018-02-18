@@ -3,7 +3,7 @@ models:
     external_links:
       -  mysql:db
     volumes:
-      - ./:/app
+      - ./app:/app
     ports:
       - "8001:8000"
-    command: bash -c "mod_wsgi-express start-server --working-directory ./ --reload-on-changes ./app/myapp_microservices/wsgi.py"
+    command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_microservices --reload-on-changes /app/myapp_microservices/myapp_microservices/wsgi.py"
