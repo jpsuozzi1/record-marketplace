@@ -1,5 +1,6 @@
 # Ignore Database
 db/
+foo/
 
 
 # Created by https://www.gitignore.io/api/django,pycharm,visualstudiocode
