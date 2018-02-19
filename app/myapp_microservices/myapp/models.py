@@ -25,6 +25,9 @@ class User(models.Model):
     def purchaseHistory(self):
         return self.listing_set.filter(listing__name='buyer')
 
+    def __str__(self):
+        return '%s %s' % (self.first_name, self.last_name)
+
 
 
 # Artist
@@ -39,6 +42,9 @@ class Artist(models.Model):
     @property
     def albumList(self):
         return self.artist_set.all()
+
+    def __str__(self):
+        return '%s %s' % (self.first_name, self.last_name)
 
 
 # Records
@@ -63,6 +69,9 @@ class Record(models.Model):
     @property
     def songLists(self):
         return self.song_set.all()
+
+    def __str__(self):
+        return '%s by %s' % (self.name, self.artist)
         
 
 # Songs 
@@ -75,6 +84,9 @@ class Song(models.Model):
     duration = models.DurationField()
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
     record = models.ForeignKey(Record, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '\"%s\" by %s' % (self.name, self.artist)
 
 
 # Listing
@@ -113,6 +125,9 @@ class Listing(models.Model):
         default=POOR,
     )
 
+    def __str__(self):
+        return '%s selling %s' % (self.seller, self.record)
+
 # Genre
 # Name
 # Record
@@ -124,3 +139,6 @@ class Genre(models.Model):
         related_query_name="genre",
     )
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '%s' % (self.name)
