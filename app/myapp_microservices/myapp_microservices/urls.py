@@ -17,4 +17,11 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+   
+    url(r'^api/v1/(?P<model>\w+)/create/$', views.create, name='create'),
+    url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/$', views.read, name="read"),
+    url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/update/$', views.update, name='update'),
+    url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/delete/$', views.delete, name='delete'),
+   
+
 ]
