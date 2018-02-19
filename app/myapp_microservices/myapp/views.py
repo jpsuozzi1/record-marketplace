@@ -22,3 +22,4 @@ def delete(request, model, model_id):
     #Delete model_id of type model
 
     return HttpResponse("Delete Model: %s id %s" % model, model_id)
+    
