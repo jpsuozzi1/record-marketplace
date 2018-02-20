@@ -26,7 +26,7 @@ def create(request, model):
             'passwordHash': password
         }
     elif (model == 'artists'):
-        name = request.POST['first_name']
+        name = request.POST['name']
         a = Artist(name=name)
         a.save()    
         data = {
@@ -174,8 +174,8 @@ def update(request, model, model_id):
         }
     elif (model == 'artists'):
         a = Artist.objects.get(pk=model_id)
-        name = request.POST.get('name', u.name)
-        a = Artist(id=model_id, first_name=first_name, last_name=last_name)
+        name = request.POST.get('name', a.name)
+        a = Artist(id=model_id, name=name)
         a.save()    
         data = {
             'id': a.id,
