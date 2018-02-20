@@ -1,4 +1,5 @@
 from django.shortcuts import render
+<<<<<<< HEAD
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.forms.models import model_to_dict
@@ -8,6 +9,7 @@ import json
 from types import *
 
 # Create your views here.
+
 def create(request, model):
     #Create a new object of type model
     if (model == 'users'):
