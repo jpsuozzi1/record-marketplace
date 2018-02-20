@@ -18,7 +18,7 @@ from myapp import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', views.home, name='home'),
+    
     url(r'^api/v1/(?P<model>\w+)/create/$', views.create, name='create'),
     url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/$', views.read, name='read'),
     url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/update/$', views.update, name='update'),

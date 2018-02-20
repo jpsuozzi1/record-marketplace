@@ -1,9 +1,6 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
 
 # Create your views here.
-def home(request):
-	return HttpResponse("Welcome to the home page!")
 
 
 def create(request, model):
@@ -25,4 +22,3 @@ def delete(request, model, model_id):
     #Delete model_id of type model
 
     return HttpResponse("Delete Model: %s id %s" % model, model_id)
-    
