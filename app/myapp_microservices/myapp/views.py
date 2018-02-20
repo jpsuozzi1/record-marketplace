@@ -1,5 +1,4 @@
 from django.shortcuts import render
-<<<<<<< HEAD
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.forms.models import model_to_dict
@@ -27,14 +26,12 @@ def create(request, model):
             'passwordHash': password
         }
     elif (model == 'artists'):
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        a = Artist(first_name=first_name, last_name=last_name)
+        name = request.POST['first_name']
+        a = Artist(name=name)
         a.save()    
         data = {
             'id': a.id,
-            'first_name': first_name,
-            'last_name': last_name
+            'name': name
         }   
     elif (model == 'records'):
         artist_id = request.POST['artist']
@@ -117,8 +114,7 @@ def read(request, model, model_id):
         a = Artist.objects.get(pk=model_id)  
         data = {
             'id': a.id,
-            'first_name': a.first_name,
-            'last_name': a.last_name
+            'name': a.name
         }   
     elif (model == 'records'):
         r = Record.objects.get(pk=model_id)
@@ -178,14 +174,12 @@ def update(request, model, model_id):
         }
     elif (model == 'artists'):
         a = Artist.objects.get(pk=model_id)
-        first_name = request.POST.get('first_name', u.first_name)
-        last_name = request.POST.get('last_name', u.last_name)
+        name = request.POST.get('name', u.name)
         a = Artist(id=model_id, first_name=first_name, last_name=last_name)
         a.save()    
         data = {
             'id': a.id,
-            'first_name': first_name,
-            'last_name': last_name
+            'name': name
         }   
     elif (model == 'records'):
         r = Record.objects.get(pk=model_id)
@@ -274,8 +268,7 @@ def delete(request, model, model_id):
         a = Artist.objects.get(pk=model_id)  
         data = {
             'id': a.id,
-            'first_name': a.first_name,
-            'last_name': a.last_name
+            'name': a.name
         }   
         a.delete()
     elif (model == 'records'):
