@@ -7,4 +7,23 @@ models:
     ports:
       - "8001:8000"
     command: bash -c "python /app/myapp_microservices/manage.py makemigrations && python /app/myapp_microservices/manage.py migrate && python /app/myapp_microservices/manage.py loaddata db.json && mod_wsgi-express start-server --working-directory /app/myapp_microservices --reload-on-changes /app/myapp_microservices/myapp_microservices/wsgi.py"
-    
+
+exp:
+   image: tp33/django
+   links:
+      - models:models-api
+   ports:
+      - "8002:8000"
+   volumes:
+      - ./exp:/app
+   command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_exp --reload-on-changes /app/myapp_exp/myapp_exp/wsgi.py"
+
+web:
+   image: tp33/django
+   links:
+      - exp:exp-api
+   ports:
+      - "8003:8000"
+   volumes:
+      - ./web:/app
+   command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_web --reload-on-changes /app/myapp_web/myapp_web/wsgi.py"
