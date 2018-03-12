@@ -4,7 +4,7 @@ from django.http import JsonResponse, HttpResponse
 
 def home(request):
 
-    return HttpResponse("This is the home page")
+    return render(request, 'home.html',{})
 
 def listing(request):
 
