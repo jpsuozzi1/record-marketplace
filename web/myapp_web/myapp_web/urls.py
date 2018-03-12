@@ -20,5 +20,5 @@ from myapp import views
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^home/$', views.home, name='home'),
-    url(r'^listing/$', views.listing, name='listing'),
+    url(r'^listing/(?P<listing_id>\d+)/$', views.listing, name='listing'),
 ]
