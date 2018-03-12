@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/$', views.read, name='read'),
     url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/update/$', views.update, name='update'),
     url(r'^api/v1/(?P<model>\w+)/(?P<model_id>\d+)/delete/$', views.delete, name='delete'),
+    url(r'^api/v1/records/(?P<model_id>\d+)/all$', views.allSongsOnRecord, name='allSongsOnRecord'),
+    url(r'^api/v1/allListings/$', views.allListings, name='allListings'),
 ]
