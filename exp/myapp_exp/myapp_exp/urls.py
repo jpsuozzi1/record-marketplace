@@ -19,4 +19,5 @@ from myapp import views
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v1/recentListings/$', views.recentListings, name='recentListings'),
+    url(r'^api/v1/listingDetails/(?P<model_id>\d+)/$', views.listingDetails, name='listingDetails'),
 ]

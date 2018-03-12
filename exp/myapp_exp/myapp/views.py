@@ -5,12 +5,11 @@ import urllib.request
 import urllib.parse
 import json
 
-from  myapp.utils import getJsonResponse
+from  myapp.utils import getJsonResponse, getAllSongsOnRecord, getFullListings
 
 
 @require_GET
 def recentListings(request):
-
     #Grab all listings (until response is not okay)
     listings = []
     i = 1
@@ -28,38 +27,23 @@ def recentListings(request):
 
     # Get full listing details instead of just ids
     data = {}
-    fullListings = []
-    for listing in listings:
-        # Get seller name
-        resp = getJsonResponse("users", listing['seller_id'])
-        if resp['ok']:
-            sellerName = resp['data']['first_name'] + " " + resp['data']['last_name']
-        else:
-            sellerName = "No Seller Found"
+    data['ok'] = True
+    data['listings'] = getFullListings(listings)
 
-        # Get buyer name
-        resp = getJsonResponse("users", listing['buyer_id'])
-        if resp['ok']:
-            buyerName = resp['data']['first_name'] + " " + resp['data']['last_name']
-        else:
-            buyerName = "No Buyer"
+    return JsonResponse(data)
+@require_GET
+def listingDetails(request, model_id):
+    resp = getJsonResponse("listings", model_id)
+    if resp['ok']:
+        listings = []
+        listings.append(resp['data'])
+        # Get full listing details instead of just ids
+        data = {}
+        data['ok'] = True
+        data['listings'] = getFullListings(listings)
+    else:
+        data = {}
+        data['ok'] = False
+        data['listings'] = []
 
-        # Get Record Name
-        resp = getJsonResponse("records", listing['record_id'])
-        if resp['ok']:
-            recordName = resp['data']['name']
-        else:
-            recordName = "No Record Name"
-
-        fullListing = {
-            "date_posted": listing['date_posted'],
-            "record": recordName,
-            "price": listing['price'],
-            "seller": sellerName,
-            "buyer": buyerName
-        }
-
-        fullListings.append(fullListing)
-
-    data['listings'] = fullListings
     return JsonResponse(data)
