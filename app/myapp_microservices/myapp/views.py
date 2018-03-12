@@ -52,8 +52,8 @@ def create(request, model):
             }
         elif (model == 'songs'):
             name = request.POST['name']
-            duration = datetime.strptime(request.POST['duration'], "%H:%M:%S")
-            dur = timedelta(hours=duration.hour, minutes=duration.minute, seconds=duration.second)
+            duration = datetime.datetime.strptime(request.POST['duration'], "%H:%M:%S")
+            dur = datetime.timedelta(hours=duration.hour, minutes=duration.minute, seconds=duration.second)
             artist_id = request.POST['artist']
             artist = Artist.objects.get(pk=artist_id)
             record_id = request.POST['record']
@@ -222,8 +222,8 @@ def update(request, model, model_id):
             s = Song.objects.get(pk=model_id)
             name = request.POST.get('name', s.name)
             duration = request.POST.get('duration', str(s.duration))
-            durStr = datetime.strptime(duration, "%H:%M:%S")
-            dur = timedelta(hours=durStr.hour, minutes=durStr.minute, seconds=durStr.second)
+            durStr = datetime.datetime.strptime(duration, "%H:%M:%S")
+            dur = datetime.timedelta(hours=durStr.hour, minutes=durStr.minute, seconds=durStr.second)
             artist_id = request.POST.get('artist', s.artist.id)
             artist = Artist.objects.get(pk=artist_id)
             record_id = request.POST.get('record', s.record.id)
