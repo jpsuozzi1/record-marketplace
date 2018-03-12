@@ -14,6 +14,12 @@ def getAllSongsOnRecord(id):
     resp = json.loads(resp_json)
     return resp
 
+def getAllListings():
+    req = urllib.request.Request('http://models-api:8000/api/v1/allListings/')
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    resp = json.loads(resp_json)
+    return resp
+
 def getFullListings(listings):
     fullListings = []
     for listing in listings:
