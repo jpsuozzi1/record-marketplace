@@ -48,6 +48,7 @@ def getFullListings(listings):
         fullSongs = getFullSongs(songs)
 
         fullListing = {
+            "listing_id": listing['id'],
             "date_posted": listing['date_posted'],
             "record": recordName,
             "songs": fullSongs,
