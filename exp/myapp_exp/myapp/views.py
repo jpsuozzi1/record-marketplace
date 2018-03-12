@@ -1,12 +1,6 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
-import urllib.request
-import urllib.parse
-import json
-
-from  myapp.utils import *
-
+from  myapp.utils import getAllListings, getFullListings, getJsonResponse
 
 @require_GET
 def recentListings(request):
@@ -20,8 +14,8 @@ def recentListings(request):
     data = {}
     data['ok'] = True
     data['listings'] = getFullListings(listings)
-
     return JsonResponse(data)
+
 @require_GET
 def listingDetails(request, model_id):
     resp = getJsonResponse("listings", model_id)
@@ -36,5 +30,4 @@ def listingDetails(request, model_id):
         data = {}
         data['ok'] = False
         data['listings'] = []
-
     return JsonResponse(data)
