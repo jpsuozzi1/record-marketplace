@@ -1,5 +1,5 @@
 from django.db import models
-
+import datetime
 
 # See https://docs.djangoproject.com/en/1.10/ref/models/fields/#django.db.models.ForeignKey
 
@@ -19,11 +19,11 @@ class User(models.Model):
 
     @property
     def sellList(self):
-        return self.listing_set.filter(listing__name='seller')
+        return self.seller.all()
 
     @property
     def purchaseHistory(self):
-        return self.listing_set.filter(listing__name='buyer')
+        return self.buyer.all()
 
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)
@@ -41,7 +41,7 @@ class Artist(models.Model):
 
     @property
     def albumList(self):
-        return self.artist_set.all()
+        return self.record_set.all()
 
     def __str__(self):
         return '%s' % (self.name)
@@ -64,7 +64,10 @@ class Record(models.Model):
     @property
     def length(self): # Duration of entire album
         songSet = self.song_set.all()
-        return sum(song.duration for song in songSet)
+        sum = datetime.timedelta()
+        for song in songSet:
+            sum += song.duration
+        return sum
     
     @property
     def songLists(self):
