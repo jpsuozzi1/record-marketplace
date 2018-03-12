@@ -352,3 +352,50 @@ def delete(request, model, model_id):
             'data': ""
         }
     return JsonResponse(result)
+
+# Return all songs of a given record
+def allSongsOnRecord(request, model_id):
+    try:
+        r = Record.objects.get(pk=model_id)
+        songList = r.songLists
+        songs = []
+        for s in songList:
+            songData = {
+                'id': s.id,
+                'name': s.name,
+                'duration': str(s.duration),
+                'artist_id': s.artist.id,
+                'record_id': s.record.id
+            }
+            songs.append(songData)
+
+        result = {
+            'ok': True,
+            'data': songs
+        }
+    except ObjectDoesNotExist:
+        result = {
+            'ok': False,
+            'data': ""
+        }
+    return JsonResponse(result)
+
+# Return all listings
+def allListings(request):
+    listings = Listing.objects.all()
+    data = []
+    for l in listings:
+        listingData = {
+                'id': l.id,
+                'price': l.price,
+                'seller_id': l.seller.id,
+                'buyer_id': l.buyer.id,
+                'record_id': l.record.id,
+                'date_posted': l.date_posted
+            }
+        data.append(listingData)
+    result = {
+        'ok': True,
+        'data': data
+    }
+    return JsonResponse(result)
