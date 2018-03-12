@@ -14,8 +14,10 @@
        <p>Seller: {{seller}}</p>
        <p>Buyer: {{buyer}}</p>
        <p>Price: ${{price}}</p>
-       <p>Song 1: {{song0}}     Duration: {{duration0}}</p>
-       <p>Song 2: {{song1}}     Duration: {{duration1}}</p>
+       {% for song in songs %}
+       <p>Song: {{song.name}} - {{song.duration}}</p>
+       {% endfor %}
+
     </div>
 </body>
 </html>

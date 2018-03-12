@@ -13,6 +13,9 @@ def home(request):
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
 
+    if not resp['ok']:
+        return HttpResponse("Error: Listing not found")
+
     return render(request, 'home.html',
     {   'record0':resp['listings'][0]['record'],
         'date_posted0':resp['listings'][0]['date_posted'],
@@ -37,19 +40,30 @@ def listing(request, listing_id):
 
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
-    
 
-    return render(request, 'listing.html', 
-    {   
+    if not resp['ok']:
+        return HttpResponse("Error: Listing not found")
+
+    # Grab all of the listing information, minus songs
+    context = {
         'listing_id': listing_id,
         'record':resp['listings'][0]['record'],
         'date_posted':resp['listings'][0]['date_posted'],
         'seller':resp['listings'][0]['seller'],
         'buyer':resp['listings'][0]['buyer'],
         'price':resp['listings'][0]['price'],
-        'song0':resp['listings'][0]['songs'][0]['name'],
-        'duration0':resp['listings'][0]['songs'][0]['duration'],
-        'song1':resp['listings'][0]['songs'][1]['name'],
-        'duration1':resp['listings'][0]['songs'][1]['duration'],
+        'songs':resp['listings'][0]['songs'],
+    }
 
-    })
+    #Dynamically grab all songs
+    # songs = resp['songs']
+
+    #for i in songs:
+     #   context[i.name.duration] = context.get(i.name.duration, []) +[i]
+    
+        # 'song0':resp['listings'][0]['songs'][0]['name'],
+        # 'duration0':resp['listings'][0]['songs'][0]['duration'],
+        
+
+
+    return render(request, 'listing.html', context)
