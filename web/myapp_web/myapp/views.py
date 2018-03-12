@@ -32,10 +32,24 @@ def listing(request, listing_id):
     # note, no timeouts, error handling or all the other things needed to do this for real
     #print ("About to perform the GET request...")
 
-    req = urllib.request.Request('http://exp-api:8000/dummy/0/')
+    url = 'http://exp-api:8000/api/v1/listingDetails/' + listing_id + '/'
+    req = urllib.request.Request(url)
 
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
+    
 
+    return render(request, 'listing.html', 
+    {   
+        'listing_id': listing_id,
+        'record':resp['listings'][0]['record'],
+        'date_posted':resp['listings'][0]['date_posted'],
+        'seller':resp['listings'][0]['seller'],
+        'buyer':resp['listings'][0]['buyer'],
+        'price':resp['listings'][0]['price'],
+        'song0':resp['listings'][0]['songs'][0]['name'],
+        'duration0':resp['listings'][0]['songs'][0]['duration'],
+        'song1':resp['listings'][0]['songs'][1]['name'],
+        'duration1':resp['listings'][0]['songs'][1]['duration'],
 
-    return render(request, 'listing.html', {'success':resp, 'listing_id':listing_id,'price':resp})
+    })
