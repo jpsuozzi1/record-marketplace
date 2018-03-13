@@ -5,7 +5,7 @@ import urllib.parse
 import json
 
 
-def home(request): 
+def home(request):
     # Display home page
 
     # Grab Json data for the most recent two listings and display them nicely
@@ -27,8 +27,10 @@ def home(request):
         'seller1':resp['listings'][1]['seller'],
         'buyer1':resp['listings'][1]['buyer'],
         'price1':resp['listings'][1]['price'],
+        'listing_id_0':resp['listings'][0]['listing_id'],
+        'listing_id_1':resp['listings'][1]['listing_id'],
     })
-    
+
 
 def listing(request, listing_id):
     # make a GET request and parse the returned JSON
@@ -60,10 +62,10 @@ def listing(request, listing_id):
 
     #for i in songs:
      #   context[i.name.duration] = context.get(i.name.duration, []) +[i]
-    
+
         # 'song0':resp['listings'][0]['songs'][0]['name'],
         # 'duration0':resp['listings'][0]['songs'][0]['duration'],
-        
+
 
 
     return render(request, 'listing.html', context)
