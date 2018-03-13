@@ -17,18 +17,9 @@ def home(request):
         return HttpResponse("Error: Listing not found")
 
     return render(request, 'home.html',
-    {   'record0':resp['listings'][0]['record'],
-        'date_posted0':resp['listings'][0]['date_posted'],
-        'seller0':resp['listings'][0]['seller'],
-        'buyer0':resp['listings'][0]['buyer'],
-        'price0':resp['listings'][0]['price'],
-        'record1':resp['listings'][1]['record'],
-        'date_posted1':resp['listings'][1]['date_posted'],
-        'seller1':resp['listings'][1]['seller'],
-        'buyer1':resp['listings'][1]['buyer'],
-        'price1':resp['listings'][1]['price'],
-        'listing_id_0':resp['listings'][0]['listing_id'],
-        'listing_id_1':resp['listings'][1]['listing_id'],
+    {
+        'listing0':resp['listings'][0],
+        'listing1':resp['listings'][1],
     })
 
 
