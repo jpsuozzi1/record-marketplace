@@ -24,27 +24,27 @@ def getFullListings(listings):
     fullListings = []
     for listing in listings:
         # Get seller name
-        resp = getJsonResponse("users", listing['seller_id'])
+        resp = getJsonResponse("users", listing['seller'])
         if resp['ok']:
             sellerName = resp['data']['first_name'] + " " + resp['data']['last_name']
         else:
             sellerName = "No Seller Found"
 
         # Get buyer name
-        resp = getJsonResponse("users", listing['buyer_id'])
+        resp = getJsonResponse("users", listing['buyer'])
         if resp['ok']:
             buyerName = resp['data']['first_name'] + " " + resp['data']['last_name']
         else:
             buyerName = "No Buyer"
 
         # Get Record Name
-        resp = getJsonResponse("records", listing['record_id'])
+        resp = getJsonResponse("records", listing['record'])
         if resp['ok']:
             recordName = resp['data']['name']
         else:
             recordName = "No Record Name"
 
-        songs = getAllSongsOnRecord(listing['record_id'])['data']
+        songs = getAllSongsOnRecord(listing['record'])['data']
         fullSongs = getFullSongs(songs)
 
         fullListing = {
@@ -64,7 +64,7 @@ def getFullSongs(songs):
     fullSongs = []
     for song in songs:
         # Get artist name
-        resp = getJsonResponse("artists", song['artist_id'])
+        resp = getJsonResponse("artists", song['artist'])
         if resp['ok']:
             artistName = resp['data']['name']
         else:

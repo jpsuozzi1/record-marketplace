@@ -98,7 +98,7 @@ def read(request, model, model_id):
             data = model_to_dict(u)
         elif (model == 'artists'):
             a = Artist.objects.get(pk=model_id)
-            data = model_to_dict(u)
+            data = model_to_dict(a)
         elif (model == 'records'):
             r = Record.objects.get(pk=model_id)
             data = model_to_dict(r)
