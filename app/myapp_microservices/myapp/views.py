@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.forms.models import model_to_dict
+from django.forms import ModelForm
 import datetime
 from myapp.models import *
 import json
@@ -9,6 +10,11 @@ from types import *
 from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
+
+def dateTimeHandler(x):
+    #y = x.release_date
+    if isInstance(x, datetime.timedelta):
+        return x.isoformat()
 
 def create(request, model):
     #Create a new object of type model
@@ -20,21 +26,12 @@ def create(request, model):
             password = request.POST['passwordHash']
             u = User(first_name=first_name, last_name=last_name, email=email, passwordHash=password)
             u.save()
-            data = {
-                'id': u.id,
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': email,
-                'passwordHash': password
-            }
+            data = model_to_dict(u)
         elif (model == 'artists'):
             name = request.POST['name']
             a = Artist(name=name)
             a.save()
-            data = {
-                'id': a.id,
-                'name': name
-            }
+            data = model_to_dict(a)
         elif (model == 'records'):
             artist_id = request.POST['artist']
             artist = Artist.objects.get(pk=artist_id)
@@ -43,13 +40,7 @@ def create(request, model):
             pressing = request.POST['pressing']
             r = Record(artist=artist, name=name, release_date=release_date, pressing=pressing)
             r.save()
-            data = {
-                'id': r.id,
-                'artist_id': artist_id,
-                'name': name,
-                'release_date': release_date,
-                'pressing': pressing
-            }
+            data = model_to_dict(r)
         elif (model == 'songs'):
             name = request.POST['name']
             duration = datetime.datetime.strptime(request.POST['duration'], "%H:%M:%S")
@@ -60,13 +51,8 @@ def create(request, model):
             record = Record.objects.get(pk=record_id)
             s = Song(name=name, duration=dur, artist=artist, record=record)
             s.save()
-            data = {
-                'id': s.id,
-                'name': name,
-                'duration': "%d:%d:%d" % (duration.hour, duration.minute, duration.second),
-                'artist_id': artist_id,
-                'record_id': record_id
-            }
+            data = model_to_dict(s)
+            data['duration'] = str(data['duration'])
         elif (model == 'listings'):
             price = request.POST['price']
             seller_id = request.POST['seller']
@@ -78,25 +64,19 @@ def create(request, model):
             date_posted = request.POST['date_posted']
             l = Listing(price=price, seller=seller, buyer=buyer, record=record, date_posted=date_posted)
             l.save()
-            data = {
-                'id': l.id,
-                'price': price,
-                'seller_id': seller_id,
-                'buyer_id': buyer_id,
-                'record_id': record_id,
-                'date_posted': date_posted
-            }
+            data = model_to_dict(l)
         elif (model == 'genres'):
             record_id = request.POST['record']
             record = Record.objects.get(pk=record_id)
             name = request.POST['name']
             g = Genre(record=record, name=name)
             g.save()
-            data = {
-                'id': g.id,
-                'record_id': record_id,
-                'name': name
-            }
+            data = model_to_dict(g)
+            # data = {
+            #     'id': g.id,
+            #     'record_id': record_id,
+            #     'name': name
+            # }
         result = {
             'ok': True,
             'data': data
@@ -115,54 +95,23 @@ def read(request, model, model_id):
     try:
         if (model == 'users'):
             u = User.objects.get(pk=model_id)
-            data = {
-                'id': u.id,
-                'first_name': u.first_name,
-                'last_name': u.last_name,
-                'email': u.email,
-                'passwordHash': u.passwordHash
-            }
+            data = model_to_dict(u)
         elif (model == 'artists'):
             a = Artist.objects.get(pk=model_id)
-            data = {
-                'id': a.id,
-                'name': a.name
-            }
+            data = model_to_dict(u)
         elif (model == 'records'):
             r = Record.objects.get(pk=model_id)
-            data = {
-                'id': r.id,
-                'artist_id': r.artist.id,
-                'name': r.name,
-                'release_date': r.release_date,
-                'pressing': r.pressing
-            }
+            data = model_to_dict(r)
         elif (model == 'songs'):
             s = Song.objects.get(pk=model_id)
-            data = {
-                'id': s.id,
-                'name': s.name,
-                'duration': str(s.duration),
-                'artist_id': s.artist.id,
-                'record_id': s.record.id
-            }
+            data = model_to_dict(s)
+            data['duration'] = str(data['duration'])
         elif (model == 'listings'):
             l = Listing.objects.get(pk=model_id)
-            data = {
-                'id': l.id,
-                'price': l.price,
-                'seller_id': l.seller.id,
-                'buyer_id': l.buyer.id,
-                'record_id': l.record.id,
-                'date_posted': l.date_posted
-            }
+            data = model_to_dict(l)
         elif (model == 'genres'):
             g = Genre.objects.get(pk=model_id)
-            data = {
-                'id': g.id,
-                'record_id': g.record.id,
-                'name': g.name
-            }
+            data = model_to_dict(g)
         result = {
             'ok': True,
             'data': data
@@ -186,22 +135,13 @@ def update(request, model, model_id):
             password = request.POST.get('passwordHash', u.passwordHash)
             u = User(id=model_id, first_name=first_name, last_name=last_name, email=email, passwordHash=password)
             u.save()
-            data = {
-                'id': u.id,
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': email,
-                'passwordHash': password
-            }
+            data = model_to_dict(u)
         elif (model == 'artists'):
             a = Artist.objects.get(pk=model_id)
             name = request.POST.get('name', a.name)
             a = Artist(id=model_id, name=name)
             a.save()
-            data = {
-                'id': a.id,
-                'name': name
-            }
+            data = model_to_dict(a)
         elif (model == 'records'):
             r = Record.objects.get(pk=model_id)
             artist_id = request.POST.get('artist', r.artist.id)
@@ -211,13 +151,7 @@ def update(request, model, model_id):
             pressing = request.POST.get('pressing', r.pressing)
             r = Record(id=model_id, artist=artist, name=name, release_date=release_date, pressing=pressing)
             r.save()
-            data = {
-                'id': r.id,
-                'artist_id': artist_id,
-                'name': name,
-                'release_date': release_date,
-                'pressing': pressing
-            }
+            data = model_to_dict(r)
         elif (model == 'songs'):
             s = Song.objects.get(pk=model_id)
             name = request.POST.get('name', s.name)
@@ -230,13 +164,8 @@ def update(request, model, model_id):
             record = Record.objects.get(pk=record_id)
             s = Song(id=model_id, name=name, duration=dur, artist=artist, record=record)
             s.save()
-            data = {
-                'id': s.id,
-                'name': name,
-                'duration': "%d:%d:%d" % (durStr.hour, durStr.minute, durStr.second),
-                'artist_id': artist_id,
-                'record_id': record_id
-            }
+            data = model_to_dict(s)
+            data['duration'] = str(data['duration'])
         elif (model == 'listings'):
             l = Listing.objects.get(pk=model_id)
             price = request.POST.get('price', l.price)
@@ -249,14 +178,7 @@ def update(request, model, model_id):
             date_posted = request.POST.get('date_posted', l.date_posted)
             l = Listing(id=model_id, price=price, seller=seller, buyer=buyer, record=record, date_posted=date_posted)
             l.save()
-            data = {
-                'id': l.id,
-                'price': price,
-                'seller_id': seller_id,
-                'buyer_id': buyer_id,
-                'record_id': record_id,
-                'date_posted': date_posted
-            }
+            data = model_to_dict(l)
         elif (model == 'genres'):
             g = Genre.objects.get(pk=model_id)
             record_id = request.POST.get('record', g.record.id)
@@ -264,12 +186,7 @@ def update(request, model, model_id):
             name = request.POST.get('name', g.name)
             g = Genre(id=model_id, record=record, name=name)
             g.save()
-            data = {
-                'id': g.id,
-                'record_id': record_id,
-                'name': name
-            }
-
+            data = model_to_dict(g)
         result = {
             'ok': True,
             'data': data
@@ -288,20 +205,11 @@ def delete(request, model, model_id):
     try:
         if (model == 'users'):
             u = User.objects.get(pk=model_id)
-            data = {
-                'id': u.id,
-                'first_name': u.first_name,
-                'last_name': u.last_name,
-                'email': u.email,
-                'passwordHash': u.passwordHash
-            }
+            data = model_to_dict(u)
             u.delete()
         elif (model == 'artists'):
             a = Artist.objects.get(pk=model_id)
-            data = {
-                'id': a.id,
-                'name': a.name
-            }
+            data = model_to_dict(a)
             a.delete()
         elif (model == 'records'):
             r = Record.objects.get(pk=model_id)
@@ -315,32 +223,16 @@ def delete(request, model, model_id):
             r.delete()
         elif (model == 'songs'):
             s = Song.objects.get(pk=model_id)
-            data = {
-                'id': s.id,
-                'name': s.name,
-                'duration': json.dumps(s.duration, default=str),
-                'artist_id': s.artist.id,
-                'record_id': s.record.id
-            }
+            data = model_to_dict(s)
+            data['duration'] = str(data['duration'])
             s.delete()
         elif (model == 'listings'):
             l = Listing.objects.get(pk=model_id)
-            data = {
-                'id': l.id,
-                'price': l.price,
-                'seller_id': l.seller.id,
-                'buyer_id': l.buyer.id,
-                'record_id': l.record.id,
-                'date_posted': l.date_posted
-            }
+            data = model_to_dict(l)
             l.delete()
         elif (model == 'genres'):
             g = Genre.objects.get(pk=model_id)
-            data = {
-                'id': g.id,
-                'record_id': g.record.id,
-                'name': g.name
-            }
+            data = model_to_dict(g)
             g.delete()
         result = {
             'ok': True,
@@ -360,13 +252,8 @@ def allSongsOnRecord(request, model_id):
         songList = r.songLists
         songs = []
         for s in songList:
-            songData = {
-                'id': s.id,
-                'name': s.name,
-                'duration': str(s.duration),
-                'artist_id': s.artist.id,
-                'record_id': s.record.id
-            }
+            songData = model_to_dict(s)
+            songData['duration'] = str(songData['duration'])
             songs.append(songData)
 
         result = {
@@ -385,14 +272,7 @@ def allListings(request):
     listings = Listing.objects.all()
     data = []
     for l in listings:
-        listingData = {
-                'id': l.id,
-                'price': l.price,
-                'seller_id': l.seller.id,
-                'buyer_id': l.buyer.id,
-                'record_id': l.record.id,
-                'date_posted': l.date_posted
-            }
+        listingData = model_to_dict(l)
         data.append(listingData)
     result = {
         'ok': True,
