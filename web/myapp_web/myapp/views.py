@@ -48,15 +48,19 @@ def listing(request, listing_id):
         'songs':resp['listings'][0]['songs'],
     }
 
-    #Dynamically grab all songs
-    # songs = resp['songs']
-
-    #for i in songs:
-     #   context[i.name.duration] = context.get(i.name.duration, []) +[i]
-
-        # 'song0':resp['listings'][0]['songs'][0]['name'],
-        # 'duration0':resp['listings'][0]['songs'][0]['duration'],
-
-
-
     return render(request, 'listing.html', context)
+
+def createAccount(request):
+    # Display form to create a new user account
+
+    return render(request, 'createAccount.html', {})
+
+def login(request):
+    # Display form to log a user in
+
+    return render(request, 'login.html', {})
+
+def logout(request):
+    # Handle logout request and display results
+
+    return render(request, 'logout.html', {})
