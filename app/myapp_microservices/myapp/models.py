@@ -28,8 +28,6 @@ class User(models.Model):
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)
 
-
-
 # Artist
 class Artist(models.Model):
     name = models.CharField(max_length=50)
@@ -45,7 +43,6 @@ class Artist(models.Model):
 
     def __str__(self):
         return '%s' % (self.name)
-
 
 # Records
 #     List of songs
@@ -76,7 +73,6 @@ class Record(models.Model):
     def __str__(self):
         return '%s by %s' % (self.name, self.artist)
         
-
 # Songs 
 #     Duration
 #     Name
@@ -90,7 +86,6 @@ class Song(models.Model):
 
     def __str__(self):
         return '\"%s\" by %s' % (self.name, self.artist)
-
 
 # Listing
 #     Price
