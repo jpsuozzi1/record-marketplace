@@ -28,10 +28,26 @@ class User(models.Model):
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)
 
+# Authenticator
+#   Each logged on user gets an Authenticator to show they
+#   are logged on.
+#   Delete once user logs out
+#
+# ###  May not be correct type for authenticator field
+#
+class Authenticator(models.Model):
+    user_id = models.IntegerField()
+    #authenticator = models.BigIntegerField(primary_key=True)
+    authenticator = models.BinaryField()
+    date_created  = models.DateField()
+
+    def __str__(self):
+        return 'User id: %i Auth: %i' % (self.user_id, self.authenticator)
+
 # Artist
 class Artist(models.Model):
     name = models.CharField(max_length=50)
-    
+
 
     @property
     def songList(self):
@@ -49,7 +65,7 @@ class Artist(models.Model):
 #     Artist
 #     Album Art (tbd)
 #     Release Date
-#     Length 
+#     Length
 #     Edition/Pressing
 #     List of genres
 class Record(models.Model):
@@ -65,15 +81,15 @@ class Record(models.Model):
         for song in songSet:
             sum += song.duration
         return sum
-    
+
     @property
     def songLists(self):
         return self.song_set.all()
 
     def __str__(self):
         return '%s by %s' % (self.name, self.artist)
-        
-# Songs 
+
+# Songs
 #     Duration
 #     Name
 #     Artist
@@ -99,8 +115,8 @@ class Listing(models.Model):
     buyer = models.ForeignKey(User, related_name='buyer', on_delete=models.CASCADE)
     record = models.ForeignKey(Record, on_delete=models.CASCADE)
     date_posted = models.DateField()
-    
-    # Condition Options: Mint, Near Mint, Very Good, Good, Fair, Poor 
+
+    # Condition Options: Mint, Near Mint, Very Good, Good, Fair, Poor
     MINT = 'M'
     NEARMINT = 'NM'
     VERYGOOD = 'VG'

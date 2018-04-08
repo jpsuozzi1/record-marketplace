@@ -2,12 +2,17 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.forms.models import model_to_dict
+from django.contrib.auth.hashers import check_password
+import myapp_microservices.settings as settings
+import os
+import hmac
 import datetime
 from myapp.models import *
 from myapp.forms import *
 import json
 from types import *
 from django.core.exceptions import ObjectDoesNotExist
+
 
 # Create your views here.
 
@@ -204,6 +209,44 @@ def allListings(request):
         data.append(listingData)
     result = {
         'ok': True,
+        'data': data
+    }
+    return JsonResponse(result)
+
+# Check username and password, return authenticator
+@require_POST
+def login(request):
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    try:
+        user = User.objects.get(email=email) # Raises exception if not found
+    except: # User not found
+        user = None
+    data = {}
+    ok = False
+    if user is None:
+        data['error'] = "User not found"
+
+    elif check_password(password, user.passwordHash):
+        #Password success
+        ok = True
+        authenticator = hmac.new(
+            key = settings.SECRET_KEY.encode('utf-8'),
+            msg = os.urandom(32),
+            digestmod = 'sha256',
+        ).hexdigest()
+        auth = Authenticator()
+        auth.user_id = user.id
+        auth.authenticator = authenticator
+        auth.date_created = datetime.date.today
+        auth.save()
+        data['auth'] = authenticator
+
+    else:
+        #Password fail
+        data['error'] = "Invalid password"
+    result = {
+        'ok': ok,
         'data': data
     }
     return JsonResponse(result)
