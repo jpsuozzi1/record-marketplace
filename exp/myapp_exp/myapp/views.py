@@ -35,11 +35,20 @@ def listingDetails(request, model_id):
         data['listings'] = []
     return JsonResponse(data)
 
-# Login, pass on data through to model layer
+# Login, pass on data through to model layer and return response
 @require_POST
 def login(request):
     data = urllib.parse.urlencode(request.POST).encode('utf-8')
     req = urllib.request.Request('http://models-api:8000/api/v1/login/',data=data)
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    resp = json.loads(resp_json)
+    return JsonResponse(resp)
+
+# Logout, pass on data through to model layer and return response
+@require_POST
+def logout(request):
+    data = urllib.parse.urlencode(request.POST).encode('utf-8')
+    req = urllib.request.Request('http://models-api:8000/api/v1/logout/',data=data)
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
     return JsonResponse(resp)
