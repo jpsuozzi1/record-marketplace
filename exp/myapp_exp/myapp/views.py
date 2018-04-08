@@ -1,6 +1,9 @@
 from django.http import JsonResponse
-from django.views.decorators.http import require_GET
-from  myapp.utils import getAllListings, getFullListings, getJsonResponse
+from django.views.decorators.http import require_GET, require_POST
+from myapp.utils import getAllListings, getFullListings, getJsonResponse
+import urllib.request
+import urllib.parse
+import json
 
 @require_GET
 def recentListings(request):
@@ -31,3 +34,12 @@ def listingDetails(request, model_id):
         data['ok'] = False
         data['listings'] = []
     return JsonResponse(data)
+
+# Login, pass on data through to model layer
+@require_POST
+def login(request):
+    data = urllib.parse.urlencode(request.POST).encode('utf-8')
+    req = urllib.request.Request('http://models-api:8000/api/v1/login/',data=data)
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    resp = json.loads(resp_json)
+    return JsonResponse(resp)

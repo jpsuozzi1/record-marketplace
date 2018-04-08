@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v1/recentListings/$', views.recentListings, name='recentListings'),
     url(r'^api/v1/listingDetails/(?P<model_id>\d+)/$', views.listingDetails, name='listingDetails'),
+    url(r'^api/v1/login/$', views.login, name='login')
 ]
