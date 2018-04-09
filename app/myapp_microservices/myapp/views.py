@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.forms.models import model_to_dict
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 import myapp_microservices.settings as settings
 import os
 import hmac
@@ -20,7 +20,9 @@ def create(request, model):
     #Create a new object of type model
     try:
         if (model == 'users'):
-            newObj = UserForm(request.POST)
+           newObj = UserForm(request.POST)
+           obj = newObj.save(commit=False)
+           obj.passwordHash = make_password(request.POST['passwordHash'])
         elif (model == 'artists'):
             newObj = ArtistForm(request.POST)
         elif (model == 'records'):
@@ -31,7 +33,7 @@ def create(request, model):
             newObj = ListingForm(request.POST)
         elif (model == 'genres'):
             newObj = GenreForm(request.POST)
-        elif (model == 'authenticators')
+        elif (model == 'authenticators'):
             newObj = AuthenticatorForm(request.POST)
         if (newObj.is_valid()):
             o = newObj.save()
@@ -68,7 +70,7 @@ def read(request, model, model_id):
             o = Listing.objects.get(pk=model_id)
         elif (model == 'genres'):
             o = Genre.objects.get(pk=model_id)
-        elif (model == 'authenticators')
+        elif (model == 'authenticators'):
             o = Authenticator.objects.get(pk=model_id)
         data = model_to_dict(o)
         if (model == 'songs'):

@@ -3,8 +3,7 @@ from django.http import JsonResponse, HttpResponse
 import urllib.request
 import urllib.parse
 import json
-from django.contrib.auth.hashers import make_password
-from .forms import CreateUser
+from .forms import *
 
 def home(request):
     # Display home page
@@ -56,16 +55,10 @@ def createAccount(request):
     if (request.method == 'POST'):
         form = CreateUser(request.POST)
         if (form.is_valid()):
-            password = request.POST['passwordHash']
-            hashed = make_password(password)
-            request.POST['passwordHash'] = hashed
-
-            data = urllib.parse.urlencode(request.POST).encode('utf-8')
+            data = urllib.parse.urlencode(request.POST).encode('utf-8')            
             url = 'http://exp-api:8000/api/v1/createAccount/'
-
             req = urllib.request.Request(url, data=data, method='POST')
-            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-            
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')            
             resp = json.loads(resp_json)
             if not resp['ok']:
                 return HttpResponse("User could not be created")
@@ -78,27 +71,26 @@ def createAccount(request):
 
 def login(request):
     # Display form to log a user in
+    # if (request.method == 'POST'):
+    #     form = LoginUser(request.POST)
+    #     if (form.is_valid()):
+    #         data = urllib.parse.urlencode(request.POST).encode('utf-8')
+    #         url = 'http://exp-api:8000/api/v1/login/'
 
-    return render(request, 'login.html', {})
+    #         req = urllib.request.Request(url, data=data, method='POST')
+    #         resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            
+    #         resp = json.loads(resp_json)
+    #         if not resp['ok']:
+    #             return HttpResponse("User could not be logged in")
+
+    #         return redirect('home')
+    # else:
+    form = LoginUser()
+
+    return render(request, 'login.html', {'form': form})
 
 def logout(request):
     # Handle logout request and display results
-    
-    # Get the authenticator's model id from the cookie
-
-
-    # Put model id into data
-    data = {'model_id': model_id}
-    data_enc = urllib.parse.urlencode(data).encode('utf-8')
-
-    url = 'http://exp-api:8000/api/v1/logout/$'
-    req = urllib.request.Request(url,data=data_enc,method='POST')
-
-
-    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-    resp = json.loads(resp_json)
-
-    if not resp['ok']:
-        return HttpResponse("Error: User Authenticator not found")
 
     return render(request, 'logout.html', {})
