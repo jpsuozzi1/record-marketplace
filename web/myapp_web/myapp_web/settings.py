@@ -52,6 +52,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+SESSION_ENGINE = (
+    'django.contrib.sessions.backends.signed_cookies'
+)
+SESSION_COOKIE_HTTPONLY = True
+
 ROOT_URLCONF = 'myapp_web.urls'
 
 TEMPLATES = [
