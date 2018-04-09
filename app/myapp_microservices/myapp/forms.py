@@ -37,3 +37,8 @@ class GenreForm(ModelForm):
         model = Genre
         #fields = ['record', 'name'] 
         fields = '__all__'
+
+class AuthenticatorForm(ModelForm):
+    class Meta:
+        model = Authenticator
+        fields = '__all__'
