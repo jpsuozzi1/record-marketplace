@@ -262,3 +262,25 @@ def login(request):
         'data': data
     }
     return JsonResponse(result)
+
+# Logout a user by deleting their authenticator
+def logout(request):
+
+    # Grab model_id from data
+    model_id = data['model_id']
+
+    # Delete the associated authenticator
+    try:
+        obj = Authenticator.objects.get(pk=model_id)
+        data = model_to_dict(obj)
+        obj.delete()
+        result = {
+            'ok': True,
+            'data': data
+        }
+    except ObjectDoesNotExist:
+        result = {
+            'ok': False,
+            'data': ""
+        }
+    return JsonResponse(result)

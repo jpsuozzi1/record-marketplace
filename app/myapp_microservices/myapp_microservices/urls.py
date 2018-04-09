@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^api/v1/records/(?P<model_id>\d+)/all$', views.allSongsOnRecord, name='allSongsOnRecord'),
     url(r'^api/v1/allListings/$', views.allListings, name='allListings'),
     url(r'^api/v1/login/$', views.login, name='login'),
+    url(r'^api/v1/logout/$', views.logout, name='logout')
 ]

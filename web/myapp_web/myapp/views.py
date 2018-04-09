@@ -62,5 +62,22 @@ def login(request):
 
 def logout(request):
     # Handle logout request and display results
+    
+    # Get the authenticator's model id from the cookie
+
+
+    # Put model id into data
+    data = {'model_id': model_id}
+    data_enc = urllib.parse.urlencode(data).encode('utf-8')
+
+    url = 'http://exp-api:8000/api/v1/logout/$'
+    req = urllib.request.Request(url,data=data_enc,method='POST')
+
+
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    resp = json.loads(resp_json)
+
+    if not resp['ok']:
+        return HttpResponse("Error: User Authenticator not found")
 
     return render(request, 'logout.html', {})
