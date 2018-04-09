@@ -31,6 +31,8 @@ def create(request, model):
             newObj = ListingForm(request.POST)
         elif (model == 'genres'):
             newObj = GenreForm(request.POST)
+        elif (model == 'authenticators')
+            newObj = AuthenticatorForm(request.POST)
         if (newObj.is_valid()):
             o = newObj.save()
             data = model_to_dict(o)
@@ -66,6 +68,8 @@ def read(request, model, model_id):
             o = Listing.objects.get(pk=model_id)
         elif (model == 'genres'):
             o = Genre.objects.get(pk=model_id)
+        elif (model == 'authenticators')
+            o = Authenticator.objects.get(pk=model_id)
         data = model_to_dict(o)
         if (model == 'songs'):
             data['duration'] = str(data['duration'])
@@ -131,6 +135,12 @@ def update(request, model, model_id):
             record = Record.objects.get(pk=record_id)
             name = request.POST.get('name', obj.name)
             obj = Genre(id=model_id, record=record, name=name)
+        elif (model == 'authenticators'):
+            obj = Authenticator.objects.get(pk=model_id)
+            user_id = request.POST.get('user_id', obj.user_id)
+            authenticator = request.POST.get('authenticator', obj.authenticator)
+            date_created = request.POST.get('date', obj.date_created)
+            obj = Authenticator(user_id=user_id,authenticator=authenticator,date_created=date_created)
         obj.save()
         data = model_to_dict(obj)
         if (model == 'songs'):
@@ -163,6 +173,8 @@ def delete(request, model, model_id):
             obj = Listing.objects.get(pk=model_id)
         elif (model == 'genres'):
             obj = Genre.objects.get(pk=model_id)
+        elif (model == 'authenticators'):
+            obj = Authenticator.objects.get(pk=model_id)
         data = model_to_dict(obj)
         if (model == 'songs'):
             data['duration'] = str(data['duration'])
@@ -249,4 +261,26 @@ def login(request):
         'ok': ok,
         'data': data
     }
+    return JsonResponse(result)
+
+# Logout a user by deleting their authenticator
+def logout(request):
+
+    # Grab model_id from data
+    model_id = data['model_id']
+
+    # Delete the associated authenticator
+    try:
+        obj = Authenticator.objects.get(pk=model_id)
+        data = model_to_dict(obj)
+        obj.delete()
+        result = {
+            'ok': True,
+            'data': data
+        }
+    except ObjectDoesNotExist:
+        result = {
+            'ok': False,
+            'data': ""
+        }
     return JsonResponse(result)

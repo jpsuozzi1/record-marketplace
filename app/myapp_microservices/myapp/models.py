@@ -15,7 +15,7 @@ class User(models.Model):
     email = models.EmailField()
 
     # https://docs.djangoproject.com/en/1.10/topics/auth/passwords/
-    passwordHash = models.CharField(max_length=100)
+    passwordHash = models.CharField(max_length=256)
 
     @property
     def sellList(self):
@@ -33,11 +33,9 @@ class User(models.Model):
 #   are logged on.
 #   Delete once user logs out
 #
-# ###  May not be correct type for authenticator field
 #
 class Authenticator(models.Model):
     user_id = models.IntegerField()
-    #authenticator = models.BigIntegerField(primary_key=True)
     authenticator = models.BinaryField()
     date_created  = models.DateField()
 
