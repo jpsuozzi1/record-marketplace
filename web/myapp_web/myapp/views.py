@@ -58,13 +58,24 @@ def createAccount(request):
 def login(request):
     # Display form to log a user in
 
+
+    # Replace this with the generated authenticator object
+    auth = "I like dogs"
+
+    # Store authenticator in cookie
+    request.session['auth'] = auth
+
     return render(request, 'login.html', {})
 
 def logout(request):
     # Handle logout request and display results
     
     # Get the authenticator's model id from the cookie
+    s = request.session.get('auth')
 
+    #print cookie
+    return HttpResponse(s)
+    model_id = 12
 
     # Put model id into data
     data = {'model_id': model_id}
@@ -72,7 +83,6 @@ def logout(request):
 
     url = 'http://exp-api:8000/api/v1/logout/$'
     req = urllib.request.Request(url,data=data_enc,method='POST')
-
 
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)

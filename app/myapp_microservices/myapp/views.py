@@ -31,7 +31,7 @@ def create(request, model):
             newObj = ListingForm(request.POST)
         elif (model == 'genres'):
             newObj = GenreForm(request.POST)
-        elif (model == 'authenticators')
+        elif (model == 'authenticators'):
             newObj = AuthenticatorForm(request.POST)
         if (newObj.is_valid()):
             o = newObj.save()
@@ -68,7 +68,7 @@ def read(request, model, model_id):
             o = Listing.objects.get(pk=model_id)
         elif (model == 'genres'):
             o = Genre.objects.get(pk=model_id)
-        elif (model == 'authenticators')
+        elif (model == 'authenticators'):
             o = Authenticator.objects.get(pk=model_id)
         data = model_to_dict(o)
         if (model == 'songs'):
