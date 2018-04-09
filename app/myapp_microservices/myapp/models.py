@@ -36,11 +36,11 @@ class User(models.Model):
 #
 class Authenticator(models.Model):
     user_id = models.IntegerField()
-    authenticator = models.BinaryField()
+    authenticator = models.CharField(primary_key=True)
     date_created  = models.DateField()
 
     def __str__(self):
-        return 'User id: %i Auth: %i' % (self.user_id, self.authenticator)
+        return 'User id: %i Auth: %s' % (self.user_id, self.authenticator)
 
 # Artist
 class Artist(models.Model):

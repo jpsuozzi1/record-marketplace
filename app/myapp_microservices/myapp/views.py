@@ -234,6 +234,7 @@ def login(request):
     password = request.POST.get('password')
     try:
         user = User.objects.get(email=email) # Raises exception if not found
+
     except: # User not found
         user = None
     data = {}
@@ -251,8 +252,8 @@ def login(request):
         ).hexdigest()
         auth = Authenticator()
         auth.user_id = user.id
-        auth.authenticator = authenticator
-        auth.date_created = datetime.date.today
+        auth.authenticator = authenticator.encode('utf-8')
+        auth.date_created = datetime.date.today()
         auth.save()
         data['auth'] = authenticator
 

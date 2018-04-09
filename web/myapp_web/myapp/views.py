@@ -71,30 +71,29 @@ def createAccount(request):
 
 def login(request):
     # Display form to log a user in
-    # if (request.method == 'POST'):
-    #     form = LoginUser(request.POST)
-    #     if (form.is_valid()):
-    #         data = urllib.parse.urlencode(request.POST).encode('utf-8')
-    #         url = 'http://exp-api:8000/api/v1/login/'
+    if (request.method == 'POST'):
+        form = LoginUser(request.POST)
+        if (form.is_valid()):
+            data = urllib.parse.urlencode(request.POST).encode('utf-8')
+            url = 'http://exp-api:8000/api/v1/login/'
 
-    #         req = urllib.request.Request(url, data=data, method='POST')
-    #         resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            req = urllib.request.Request(url, data=data, method='POST')
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             
-    #         resp = json.loads(resp_json)
-    #         if not resp['ok']:
-    #             return HttpResponse("User could not be logged in")
+            resp = json.loads(resp_json)
+            if not resp['ok']:
+                return HttpResponse("User could not be logged in")
 
-    #         return redirect('home')
-    # else:
-    form = LoginUser()
+            auth = resp['data']['auth']
 
-    # Replace this with the generated authenticator object
-    auth = "I like dogs"
+            # Store authenticator in cookie
+            request.session['auth'] = auth
 
-    # Store authenticator in cookie
-    request.session['auth'] = auth
+            return redirect('createListing')
+    else:
+        form = LoginUser()
 
-    return render(request, 'login.html', {})
+    return render(request, 'login.html', {'form': form})
 
 def logout(request):
     # Handle logout request and display results
