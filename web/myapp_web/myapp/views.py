@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import urllib.request
 import urllib.parse
 import json
-
+from django.contrib.auth.hashers import make_password
+from .forms import CreateUser
 
 def home(request):
     # Display home page
@@ -52,8 +53,28 @@ def listing(request, listing_id):
 
 def createAccount(request):
     # Display form to create a new user account
+    if (request.method == 'POST'):
+        form = CreateUser(request.POST)
+        if (form.is_valid()):
+            password = request.POST['passwordHash']
+            hashed = make_password(password)
+            request.POST['passwordHash'] = hashed
 
-    return render(request, 'createAccount.html', {})
+            data = urllib.parse.urlencode(request.POST).encode('utf-8')
+            url = 'http://exp-api:8000/api/v1/createAccount/'
+
+            req = urllib.request.Request(url, data=data, method='POST')
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            
+            resp = json.loads(resp_json)
+            if not resp['ok']:
+                return HttpResponse("User could not be created")
+
+            return redirect('login')
+    else:
+        form = CreateUser()
+
+    return render(request, 'createAccount.html', {'form': form})
 
 def login(request):
     # Display form to log a user in
