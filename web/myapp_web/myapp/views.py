@@ -128,6 +128,7 @@ def login(request):
     if (request.COOKIES.get('auth')):
         messages.info(request, 'You are already logged in.')
         return HttpResponseRedirect(reverse('home'), {'message': messages})
+    
 
     if (request.method == 'GET'):
         form = LoginUser()
@@ -137,7 +138,7 @@ def login(request):
     elif (request.method == 'POST'):
         form = LoginUser(request.POST)
         if (form.is_valid()):
-            next = reverse('createListing')
+            next = reverse('home')
 
             data = urllib.parse.urlencode(request.POST).encode('utf-8')
             url = 'http://exp-api:8000/api/v1/login/'
@@ -165,8 +166,12 @@ def logout(request):
     # Get the authenticator's model id from the cookie
     auth = request.COOKIES.get('auth')
     
+    next = reverse('home')
+
     if not auth:
-        return HttpResponseRedirect(reverse("login"))
+        messages.info(request, "You are not logged in.")
+        response = HttpResponseRedirect(next, {'messages': messages} )
+        return response
 
     # Put model id into data
     data = urllib.parse.urlencode({'auth': auth}).encode('utf-8')
@@ -181,10 +186,11 @@ def logout(request):
     resp = json.loads(resp_json)
 
     if not resp['ok']:
-        return HttpResponse("Error: User Authenticator not found")
-    
-    next = reverse('login')
-    response = HttpResponseRedirect(next)
-    response.delete_cookie('auth')
+        messages.info(request, "You are not logged in.")
+        response = HttpResponseRedirect(next, {'messages': messages} )
+    else:
+        messages.info(request, "Successfully logged out!")
+        response = HttpResponseRedirect(next, {'messages': messages} )
+        response.delete_cookie('auth')
 
     return response
