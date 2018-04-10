@@ -45,7 +45,7 @@ class UserModelTest(TestCase):
 	def test_password_max_length(self):
 		user = self.user1
 		max_length = user._meta.get_field('passwordHash').max_length
-		self.assertEquals(max_length, 100)
+		self.assertEquals(max_length, 255)
 
 	def test_object_name_is_first_last(self):
 		user = self.user1
