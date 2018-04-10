@@ -27,7 +27,6 @@ def create(request, model):
                 obj.passwordHash = make_password(request.POST['passwordHash'])
             else:
                 ok = False
-                data = newObj.errors
         elif (model == 'artists'):
             newObj = ArtistForm(request.POST)
         elif (model == 'records'):
@@ -54,7 +53,7 @@ def create(request, model):
             ok = True
         else:
             ok = False
-            #data = newObj.errors
+            data = newObj.errors
         if (model == 'songs'):
             data['duration'] = str(data['duration'])
         result = {
