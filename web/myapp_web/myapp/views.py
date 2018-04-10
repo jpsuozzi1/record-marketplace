@@ -69,7 +69,7 @@ def createAccount(request):
             resp = json.loads(resp_json)
             if not resp['ok']:
                 if resp['data']['email']:
-                    messages.error(request, "This email is already in use. Please try again.")
+                    messages.info(request, "This email is already in use. Please try again.")
                     return HttpResponseRedirect(reverse('createAccount'), {'messages': messages})
 
             return redirect('login')
@@ -83,7 +83,8 @@ def createListing(request):
     auth = request.COOKIES.get('auth')
 
     if not auth:
-        return HttpResponseRedirect(reverse("login") + "?next=" + reverse("createListing"))
+        messages.info(request, "You must be logged in to create a listing")
+        return HttpResponseRedirect(reverse("login") + "?next=" + reverse("createListing"), {'messages': messages})
 
     if (request.method == 'GET'):
         form = CreateListing()
@@ -124,6 +125,10 @@ def recordsList(request):
 
 def login(request):
     # Display form to log a user in
+    if (request.COOKIES.get('auth')):
+        messages.info(request, 'You are already logged in.')
+        return HttpResponseRedirect(reverse('home'), {'message': messages})
+
     if (request.method == 'GET'):
         form = LoginUser()
         next = request.GET.get('next') or reverse('home')
@@ -159,6 +164,9 @@ def logout(request):
     # Get the authenticator's model id from the cookie
     auth = request.COOKIES.get('auth')
     
+    if not auth:
+        return HttpResponseRedirect(reverse("login"))
+
     # Put model id into data
     data = urllib.parse.urlencode({'auth': auth}).encode('utf-8')
     url = 'http://exp-api:8000/api/v1/logout/'

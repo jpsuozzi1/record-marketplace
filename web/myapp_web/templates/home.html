@@ -3,6 +3,11 @@
 {% block content %}
 <body>
     <div>
+            {% if messages %}
+    {% for message in messages %}
+    <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+{% endif %}
         <h1>Home Page</h1>
     </div>
     <div>

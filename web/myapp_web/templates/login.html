@@ -3,6 +3,11 @@
 {% include 'blankbar.html' %}
 <h1>Welcome!</h1>
 <h3>Login below:</h3>
+{% if messages %}
+    {% for message in messages %}
+    <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+{% endif %}
 <form method="post">
     {{ form.as_p }}
     <button type="submit">Login</button>
