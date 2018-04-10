@@ -147,7 +147,8 @@ def login(request):
             
             resp = json.loads(resp_json)
             if not resp['ok']:
-                return HttpResponse("User could not be logged in")
+                messages.info(request, "Incorrect email or password. Please try again.")
+                return HttpResponseRedirect(reverse('login'), {'messages': messages})
 
             # Store authenticator in cookie
             auth = resp['data']['auth']
