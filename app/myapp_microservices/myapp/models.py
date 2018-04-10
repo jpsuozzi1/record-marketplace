@@ -12,7 +12,7 @@ import datetime
 class User(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
 
     # https://docs.djangoproject.com/en/1.10/topics/auth/passwords/
     passwordHash = models.CharField(max_length=255)

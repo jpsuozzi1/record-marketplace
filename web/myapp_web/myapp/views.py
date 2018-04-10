@@ -6,6 +6,7 @@ import urllib.parse
 import json
 from .forms import *
 from urllib.error import HTTPError
+from django.contrib import messages
 
 def home(request):
     # Display home page
@@ -60,10 +61,16 @@ def createAccount(request):
             data = urllib.parse.urlencode(request.POST).encode('utf-8')            
             url = 'http://exp-api:8000/api/v1/createAccount/'
             req = urllib.request.Request(url, data=data, method='POST')
-            resp_json = urllib.request.urlopen(req).read().decode('utf-8')            
+            try:
+                resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            except HTTPError as e:
+                content = e.read()
+                return HttpResponse(content)
             resp = json.loads(resp_json)
             if not resp['ok']:
-                return HttpResponse("User could not be created")
+                if resp['data']['email']:
+                    messages.error(request, "This email is already in use. Please try again.")
+                    return HttpResponseRedirect(reverse('createAccount'), {'messages': messages})
 
             return redirect('login')
     else:

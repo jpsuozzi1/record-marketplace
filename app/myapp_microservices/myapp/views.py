@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_POST, require_GET
 from django.forms.models import model_to_dict
 from django.contrib.auth.hashers import check_password, make_password
@@ -12,6 +12,7 @@ from myapp.forms import *
 import json
 from types import *
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
 
 # Create your views here.
@@ -20,9 +21,13 @@ def create(request, model):
     #Create a new object of type model
     try:
         if (model == 'users'):
-           newObj = UserForm(request.POST)
-           obj = newObj.save(commit=False)
-           obj.passwordHash = make_password(request.POST['passwordHash'])
+            newObj = UserForm(request.POST)
+            if (newObj.is_valid()):
+                obj = newObj.save(commit=False)
+                obj.passwordHash = make_password(request.POST['passwordHash'])
+            else:
+                ok = False
+                data = newObj.errors
         elif (model == 'artists'):
             newObj = ArtistForm(request.POST)
         elif (model == 'records'):
@@ -46,15 +51,16 @@ def create(request, model):
         if (newObj.is_valid()):
             o = newObj.save()
             data = model_to_dict(o)
+            ok = True
         else:
-            data = newObj.errors
+            ok = False
+            #data = newObj.errors
         if (model == 'songs'):
             data['duration'] = str(data['duration'])
         result = {
-            'ok': True,
+            'ok': ok,
             'data': data
         }
-
     except ObjectDoesNotExist:
         result = {
             'ok': False,
