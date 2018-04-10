@@ -15,7 +15,7 @@ class User(models.Model):
     email = models.EmailField()
 
     # https://docs.djangoproject.com/en/1.10/topics/auth/passwords/
-    passwordHash = models.CharField(max_length=256)
+    passwordHash = models.CharField(max_length=255)
 
     @property
     def sellList(self):
