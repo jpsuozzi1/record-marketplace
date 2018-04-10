@@ -36,7 +36,7 @@ class User(models.Model):
 #
 class Authenticator(models.Model):
     user_id = models.IntegerField()
-    authenticator = models.CharField(primary_key=True)
+    authenticator = models.CharField(max_length=255, primary_key=True)
     date_created  = models.DateField()
 
     def __str__(self):
