@@ -289,12 +289,10 @@ def login(request):
 # Logout a user by deleting their authenticator
 def logout(request):
 
-    # Grab model_id from data
-    model_id = data['model_id']
-
+    auth = request.POST['auth']
     # Delete the associated authenticator
     try:
-        obj = Authenticator.objects.get(pk=model_id)
+        obj = Authenticator.objects.get(pk=auth)
         data = model_to_dict(obj)
         obj.delete()
         result = {

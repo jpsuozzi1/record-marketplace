@@ -73,6 +73,10 @@ def login(request):
 def logout(request):
     data = urllib.parse.urlencode(request.POST).encode('utf-8')
     req = urllib.request.Request('http://models-api:8000/api/v1/logout/',data=data)
-    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    try:
+        resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    except HTTPError as e:
+        content = e.read()
+        return HttpResponse(content)
     resp = json.loads(resp_json)
     return JsonResponse(resp)

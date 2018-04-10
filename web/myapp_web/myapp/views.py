@@ -75,6 +75,9 @@ def createListing(request):
 
     auth = request.COOKIES.get('auth')
 
+    if not auth:
+        return HttpResponseRedirect(reverse("login") + "?next=" + reverse("createListing"))
+
     if (request.method == 'GET'):
         form = CreateListing()
         return render(request, 'createListing.html', {'form': form})
@@ -147,23 +150,25 @@ def logout(request):
     # Handle logout request and display results
     
     # Get the authenticator's model id from the cookie
-    s = request.session.get('auth')
-
-    #print cookie
-    return HttpResponse(s)
-    model_id = 12
-
+    auth = request.COOKIES.get('auth')
+    
     # Put model id into data
-    data = {'model_id': model_id}
-    data_enc = urllib.parse.urlencode(data).encode('utf-8')
+    data = urllib.parse.urlencode({'auth': auth}).encode('utf-8')
+    url = 'http://exp-api:8000/api/v1/logout/'
 
-    url = 'http://exp-api:8000/api/v1/logout/$'
-    req = urllib.request.Request(url,data=data_enc,method='POST')
-
-    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    req = urllib.request.Request(url, data=data, method='POST')
+    try:
+        resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    except HTTPError as e:
+        content = e.read()
+        return HttpResponse(content)
     resp = json.loads(resp_json)
 
     if not resp['ok']:
         return HttpResponse("Error: User Authenticator not found")
+    
+    next = reverse('login')
+    response = HttpResponseRedirect(next)
+    response.delete_cookie('auth')
 
-    return render(request, 'logout.html', {})
+    return response
