@@ -20,7 +20,9 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v1/recentListings/$', views.recentListings, name='recentListings'),
     url(r'^api/v1/listingDetails/(?P<model_id>\d+)/$', views.listingDetails, name='listingDetails'),
+    url(r'^api/v1/recordsList/$', views.recordsList, name='recordsList'),
     url(r'^api/v1/login/$', views.login, name='login'),
     url(r'^api/v1/logout/$', views.logout, name='logout'),
     url(r'^api/v1/createAccount/$', views.createAccount, name='createAccount'),
+    url(r'^api/v1/createListing/$', views.createListing, name='createListing'),
 ]

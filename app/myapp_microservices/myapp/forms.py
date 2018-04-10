@@ -29,8 +29,8 @@ class SongForm(ModelForm):
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
-        #fields = ['price', 'seller', 'buyer', 'record', 'date_posted']
-        fields = '__all__'
+        fields = ['price', 'condition']
+        #fields = '__all__'
 
 class GenreForm(ModelForm):
     class Meta:

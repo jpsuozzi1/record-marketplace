@@ -1,9 +1,10 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_GET, require_POST
-from myapp.utils import getAllListings, getFullListings, getJsonResponse
+from myapp.utils import getAllListings, getFullListings, getJsonResponse, getAllRecords
 import urllib.request
 import urllib.parse
 import json
+from urllib.error import HTTPError
 
 @require_GET
 def recentListings(request):
@@ -43,6 +44,20 @@ def createAccount(request):
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
     return JsonResponse(resp)
+
+@require_POST
+def createListing(request):
+    data = urllib.parse.urlencode(request.POST).encode('utf-8')
+    req = urllib.request.Request('http://models-api:8000/api/v1/listings/create/', data=data)
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    resp = json.loads(resp_json)
+    return JsonResponse(resp)
+
+@require_GET
+def recordsList(request):
+    records = getAllRecords()['data']
+    return JsonResponse(records, safe=False)
+
 
 # Login, pass on data through to model layer and return response
 @require_POST

@@ -110,7 +110,7 @@ class Song(models.Model):
 class Listing(models.Model):
     price = models.DecimalField(max_digits=6,decimal_places=2)
     seller = models.ForeignKey(User, related_name='seller', on_delete=models.CASCADE)
-    buyer = models.ForeignKey(User, related_name='buyer', on_delete=models.CASCADE)
+    buyer = models.ForeignKey(User, related_name='buyer', on_delete=models.CASCADE, blank=True)
     record = models.ForeignKey(Record, on_delete=models.CASCADE)
     date_posted = models.DateField()
 

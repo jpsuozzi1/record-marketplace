@@ -30,7 +30,15 @@ def create(request, model):
         elif (model == 'songs'):
             newObj = SongForm(request.POST)
         elif (model == 'listings'):
+            auth = request.POST['cookie']
+            authUser = Authenticator.objects.get(pk=auth)
+            user = User.objects.get(pk=authUser.user_id)
             newObj = ListingForm(request.POST)
+            obj = newObj.save(commit=False)
+            obj.record = Record.objects.get(name=request.POST['recordName'])
+            obj.buyer = user
+            obj.seller = user
+            obj.date_posted= datetime.date.today()
         elif (model == 'genres'):
             newObj = GenreForm(request.POST)
         elif (model == 'authenticators'):
@@ -221,6 +229,18 @@ def allListings(request):
     for l in listings:
         listingData = model_to_dict(l)
         data.append(listingData)
+    result = {
+        'ok': True,
+        'data': data
+    }
+    return JsonResponse(result)
+
+def allRecords(request):
+    records = Record.objects.all()
+    data = []
+    for r in records:
+        recordData = model_to_dict(r)
+        data.append(recordData)
     result = {
         'ok': True,
         'data': data

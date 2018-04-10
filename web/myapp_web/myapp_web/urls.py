@@ -21,7 +21,9 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^home/$', views.home, name='home'),
     url(r'^listing/(?P<listing_id>\d+)/$', views.listing, name='listing'),
+    url(r'^recordsList/$', views.recordsList, name='recordsList'),
     url(r'^createAccount/$', views.createAccount, name='createAccount'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$',views.logout, name='logout'),
+    url(r'^createListing/$', views.createListing, name='createListing'),
 ]

@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 import urllib.request
 import urllib.parse
 import json
 from .forms import *
+from urllib.error import HTTPError
 
 def home(request):
     # Display home page
@@ -69,11 +71,59 @@ def createAccount(request):
 
     return render(request, 'createAccount.html', {'form': form})
 
+def createListing(request):
+
+    auth = request.COOKIES.get('auth')
+
+    if (request.method == 'GET'):
+        form = CreateListing()
+        return render(request, 'createListing.html', {'form': form})
+
+    elif (request.method == 'POST'):
+        form = CreateListing(request.POST)
+        if (form.is_valid()):
+            params = {'price': request.POST['price'], 'recordName': request.POST['record'], 'condition': request.POST['condition'], 'cookie': auth}
+            data = urllib.parse.urlencode(params).encode('utf-8')
+            url = 'http://exp-api:8000/api/v1/createListing/'
+            req = urllib.request.Request(url, data=data, method='POST')
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            resp = json.loads(resp_json)
+            if not resp['ok']:
+                return HttpResponse("Listing could not be created")
+
+            return redirect('home')
+
+    return render(request, 'createListing.html', {'form': form})
+
+def recordsList(request):
+
+    url = 'http://exp-api:8000/api/v1/recordsList/'
+    req = urllib.request.Request(url)
+
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    records = json.loads(resp_json)
+
+    names = []
+    for r in records:
+        names.append(r['name'])
+    result = names
+    
+    return JsonResponse(result, safe=False)
+    
+    #return render(request, 'listing.html', {})
+
 def login(request):
     # Display form to log a user in
-    if (request.method == 'POST'):
+    if (request.method == 'GET'):
+        form = LoginUser()
+        next = request.GET.get('next') or reverse('home')
+        return render(request, 'login.html', {'form': form})
+
+    elif (request.method == 'POST'):
         form = LoginUser(request.POST)
         if (form.is_valid()):
+            next = reverse('createListing')
+
             data = urllib.parse.urlencode(request.POST).encode('utf-8')
             url = 'http://exp-api:8000/api/v1/login/'
 
@@ -84,14 +134,12 @@ def login(request):
             if not resp['ok']:
                 return HttpResponse("User could not be logged in")
 
-            auth = resp['data']['auth']
-
             # Store authenticator in cookie
-            request.session['auth'] = auth
+            auth = resp['data']['auth']
+            response = HttpResponseRedirect(next)
+            response.set_cookie("auth", auth)
 
-            return redirect('createListing')
-    else:
-        form = LoginUser()
+            return response
 
     return render(request, 'login.html', {'form': form})
 
