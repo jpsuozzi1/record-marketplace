@@ -5,6 +5,7 @@ import urllib.request
 import urllib.parse
 import json
 from urllib.error import HTTPError
+from kafka import KafkaProducer
 
 @require_GET
 def recentListings(request):
@@ -55,6 +56,17 @@ def createListing(request):
     req = urllib.request.Request('http://models-api:8000/api/v1/listings/create/', data=data)
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
+
+    # Add to Listing to Kafka
+    # if [resp]['ok']:
+    #     fullListing = getFullListings([resp['data']])[0]
+
+
+    #     producer = KafkaProducer(bootstrap_servers='kafka:9092')
+    #     listing = {
+    #         'id' = fullListing['id'],
+    #         'record' = fullListing['record'],
+    #     }
     return JsonResponse(resp)
 
 @require_GET
