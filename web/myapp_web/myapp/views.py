@@ -40,7 +40,7 @@ def listing(request, listing_id):
     if not resp['ok']:
         return HttpResponse("Error: Listing not found")
 
-    # Grab all of the listing information, minus songs
+    # Grab all of the listing information
     context = {
         'listing_id': listing_id,
         'record':resp['listings'][0]['record'],
@@ -194,3 +194,25 @@ def logout(request):
         response.delete_cookie('auth')
 
     return response
+
+def searchResults(request):
+    # Display results from a search
+
+    # Call the search experience service
+    req = urllib.request.Request('http://exp-api:8000/api/v1/search/')
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    resp = json.loads(resp_json)
+
+    # Redirect to the home page and display a message if no listings found
+    if not resp['ok']:
+        next = reverse('home')
+        messages.info(request, "No listings found")
+        response = HttpResponseRedirect(next, {'messages': messages} )
+        return response
+
+    # Add results to context
+    context = {
+        'listings':resp['listings'],
+    }
+
+    return render(request, 'srp.html', context)

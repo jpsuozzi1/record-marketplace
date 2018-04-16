@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+    {% block content %}
+    <body>
+        {% for listing in listings %}
+        <div>
+            <h1>Listing id: {{listing.listing_id}}</h1>
+        </div>
+        <div>
+            <h4>{{listing.record}}</h4>
+            <p>{{listing.date_posted}}</p>
+            <p>Seller: {{listing.seller}}</p>
+            <p>Price: ${{listing.price}}</p>
+        </div>
+        {% endfor %}
+    </body>
+    {% endblock %}
+{% endblock %}
