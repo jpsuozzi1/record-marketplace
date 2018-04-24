@@ -21,7 +21,7 @@ web:
       - exp:exp-api
       - es:es
    ports:
-      - "8003:8000"
+      - "80:8000"
    volumes:
       - ./web:/app
    command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_web --reload-on-changes /app/myapp_web/myapp_web/wsgi.py"
