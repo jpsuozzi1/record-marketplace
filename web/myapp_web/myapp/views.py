@@ -10,10 +10,13 @@ from django.contrib import messages
 
 def home(request):
     # Display home page
-
     # Grab Json data for the most recent two listings and display them nicely
     req = urllib.request.Request('http://exp-api:8000/api/v1/recentListings/')
-    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    try:
+        resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    except HTTPError as e:
+        content = e.read()
+        return HttpResponse(content)
     resp = json.loads(resp_json)
 
     if not resp['ok']:
@@ -40,7 +43,7 @@ def listing(request, listing_id):
     if not resp['ok']:
         return HttpResponse("Error: Listing not found")
 
-    # Grab all of the listing information, minus songs
+    # Grab all of the listing information
     context = {
         'listing_id': listing_id,
         'record':resp['listings'][0]['record'],
@@ -97,7 +100,10 @@ def createListing(request):
             data = urllib.parse.urlencode(params).encode('utf-8')
             url = 'http://exp-api:8000/api/v1/createListing/'
             req = urllib.request.Request(url, data=data, method='POST')
-            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            try:
+                resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            except HTTPError as e:
+                return HttpResponse(e.read())
             resp = json.loads(resp_json)
             if not resp['ok']:
                 return HttpResponse("Listing could not be created")
@@ -194,3 +200,28 @@ def logout(request):
         response.delete_cookie('auth')
 
     return response
+
+def searchResults(request):
+
+    query = {'query': request.GET.get('query')}
+    data = urllib.parse.urlencode(query).encode('utf-8')   
+    url = 'http://exp-api:8000/api/v1/search/'
+    req = urllib.request.Request(url, data=data, method='POST')
+    try:
+        resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    except HTTPError as e:
+        content = e.read()
+        return HttpResponse(content)
+    resp = json.loads(resp_json)
+    # Redirect to the home page and display a message if no listings found
+    if not resp['ok']:
+        next = reverse('home')
+        messages.info(request, "No listings found")
+        response = HttpResponseRedirect(next, {'messages': messages} )
+        return response
+    # Add results to context
+    context = {
+        'listings':resp['listings'],
+    }
+
+    return render(request, 'srp.html', context)

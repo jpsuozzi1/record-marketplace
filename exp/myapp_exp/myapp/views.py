@@ -6,6 +6,9 @@ import urllib.parse
 import json
 from urllib.error import HTTPError
 from kafka import KafkaProducer
+from elasticsearch import Elasticsearch
+
+es = Elasticsearch(['es'])
 
 @require_GET
 def recentListings(request):
@@ -58,15 +61,17 @@ def createListing(request):
     resp = json.loads(resp_json)
 
     # Add to Listing to Kafka
-    # if [resp]['ok']:
-    #     fullListing = getFullListings([resp['data']])[0]
+    if resp['ok']:
+        listings = []
+        listings.append(resp['data'])
+        fullListing = getFullListings(listings)[0]
 
-
-    #     producer = KafkaProducer(bootstrap_servers='kafka:9092')
-    #     listing = {
-    #         'id' = fullListing['id'],
-    #         'record' = fullListing['record'],
-    #     }
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
+        listing = {
+            'id': fullListing['listing_id'],
+            'record': fullListing['record'],
+        }
+        producer.send('new-listings-topic', json.dumps(listing).encode('utf-8'))
     return JsonResponse(resp)
 
 @require_GET
@@ -96,3 +101,26 @@ def logout(request):
         return HttpResponse(content)
     resp = json.loads(resp_json)
     return JsonResponse(resp)
+
+def search(request):
+    data = {}
+    listings = []
+    esListings = es.search(index='listing_index', body={'query': {'query_string': request.POST}, 'size': 10})
+    for hit in esListings['hits']['hits']:
+        listingId = hit['_id']
+        resp = getJsonResponse("listings", listingId)
+        if resp['ok']:
+            data['ok'] = True
+            listings.append(resp['data'])
+        else:
+            data['ok'] = False
+            data['listings'] = []
+            return JsonResponse(data)
+    if listings:
+        data['listings'] = getFullListings(listings)
+        data['ok'] = True
+    else:
+        data['listings'] = []
+        data['ok'] = False
+
+    return JsonResponse(data)
