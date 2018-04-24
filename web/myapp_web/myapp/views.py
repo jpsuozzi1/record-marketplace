@@ -26,7 +26,6 @@ def home(request):
     {
         'listing0':resp['listings'][0],
         'listing1':resp['listings'][1],
-        # 'form': form,
     })
 
 
@@ -214,14 +213,12 @@ def searchResults(request):
         content = e.read()
         return HttpResponse(content)
     resp = json.loads(resp_json)
-    # return JsonResponse(resp)
     # Redirect to the home page and display a message if no listings found
     if not resp['ok']:
         next = reverse('home')
         messages.info(request, "No listings found")
         response = HttpResponseRedirect(next, {'messages': messages} )
         return response
-    # return JsonResponse(resp)
     # Add results to context
     context = {
         'listings':resp['listings'],

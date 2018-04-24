@@ -40,7 +40,7 @@ def listingDetails(request, model_id):
         data['listings'] = []
     return JsonResponse(data)
 
-# Create account, pass data to model layer and return responsej
+# Create account, pass data to model layer and return response
 @require_POST
 def createAccount(request):
     data = urllib.parse.urlencode(request.POST).encode('utf-8')
@@ -57,10 +57,7 @@ def createAccount(request):
 def createListing(request):
     data = urllib.parse.urlencode(request.POST).encode('utf-8')
     req = urllib.request.Request('http://models-api:8000/api/v1/listings/create/', data=data)
-    #try:
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-    # except HTTPError as e:
-        # return HttpResponse(e.read())
     resp = json.loads(resp_json)
 
     # Add to Listing to Kafka
@@ -109,18 +106,19 @@ def search(request):
     data = {}
     listings = []
     esListings = es.search(index='listing_index', body={'query': {'query_string': request.POST}, 'size': 10})
-    if esListings:
-        for hit in esListings['hits']['hits']:
-            listingId = hit['_id']
-            resp = getJsonResponse("listings", listingId)
-            if resp['ok']:
-                listings.append(resp['data'])
-            else:
-                data['ok'] = False
-                data['listings'] = []
-                return JsonResponse(data)
-        data['ok'] = True
+    for hit in esListings['hits']['hits']:
+        listingId = hit['_id']
+        resp = getJsonResponse("listings", listingId)
+        if resp['ok']:
+            data['ok'] = True
+            listings.append(resp['data'])
+        else:
+            data['ok'] = False
+            data['listings'] = []
+            return JsonResponse(data)
+    if listings:
         data['listings'] = getFullListings(listings)
+        data['ok'] = True
     else:
         data['listings'] = []
         data['ok'] = False
