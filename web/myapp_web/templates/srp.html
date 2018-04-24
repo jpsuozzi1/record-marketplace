@@ -4,13 +4,13 @@
 <body>
     {% for listing in listings %}
     <div>
-        <h1>Listing id: {{listing.listing_id}}</h1>
+        <a href="/listing/{{listing.listing_id}}"><h3>Listing {{ forloop.counter }}:</h3></a>
     </div>
     <div>
         <h4>{{listing.record}}</h4>
         <p>{{listing.date_posted}}</p>
         <p>Seller: {{listing.seller}}</p>
-        <p>Buyer: {{listing.buyer</p>
+        <p>Buyer: {{listing.buyer}}</p>
         <p>Price: ${{listing.price}}</p>
     </div>
     {% endfor %}

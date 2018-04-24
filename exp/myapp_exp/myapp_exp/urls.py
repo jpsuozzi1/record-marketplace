@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^api/v1/logout/$', views.logout, name='logout'),
     url(r'^api/v1/createAccount/$', views.createAccount, name='createAccount'),
     url(r'^api/v1/createListing/$', views.createListing, name='createListing'),
+    url(r'^api/v1/search/$', views.search, name='search'),
 ]

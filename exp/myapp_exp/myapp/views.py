@@ -6,6 +6,9 @@ import urllib.parse
 import json
 from urllib.error import HTTPError
 from kafka import KafkaProducer
+from elasticsearch import Elasticsearch
+
+es = Elasticsearch(['es'])
 
 @require_GET
 def recentListings(request):
@@ -37,7 +40,7 @@ def listingDetails(request, model_id):
         data['listings'] = []
     return JsonResponse(data)
 
-# Create account, pass data to model layer and return response
+# Create account, pass data to model layer and return responsej
 @require_POST
 def createAccount(request):
     data = urllib.parse.urlencode(request.POST).encode('utf-8')
@@ -54,19 +57,24 @@ def createAccount(request):
 def createListing(request):
     data = urllib.parse.urlencode(request.POST).encode('utf-8')
     req = urllib.request.Request('http://models-api:8000/api/v1/listings/create/', data=data)
+    #try:
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    # except HTTPError as e:
+        # return HttpResponse(e.read())
     resp = json.loads(resp_json)
 
     # Add to Listing to Kafka
-    # if [resp]['ok']:
-    #     fullListing = getFullListings([resp['data']])[0]
+    if resp['ok']:
+        listings = []
+        listings.append(resp['data'])
+        fullListing = getFullListings(listings)[0]
 
-
-    #     producer = KafkaProducer(bootstrap_servers='kafka:9092')
-    #     listing = {
-    #         'id' = fullListing['id'],
-    #         'record' = fullListing['record'],
-    #     }
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
+        listing = {
+            'id': fullListing['listing_id'],
+            'record': fullListing['record'],
+        }
+        producer.send('new-listings-topic', json.dumps(listing).encode('utf-8'))
     return JsonResponse(resp)
 
 @require_GET
@@ -96,3 +104,25 @@ def logout(request):
         return HttpResponse(content)
     resp = json.loads(resp_json)
     return JsonResponse(resp)
+
+def search(request):
+    data = {}
+    listings = []
+    esListings = es.search(index='listing_index', body={'query': {'query_string': request.POST}, 'size': 10})
+    if esListings:
+        for hit in esListings['hits']['hits']:
+            listingId = hit['_id']
+            resp = getJsonResponse("listings", listingId)
+            if resp['ok']:
+                listings.append(resp['data'])
+            else:
+                data['ok'] = False
+                data['listings'] = []
+                return JsonResponse(data)
+        data['ok'] = True
+        data['listings'] = getFullListings(listings)
+    else:
+        data['listings'] = []
+        data['ok'] = False
+
+    return JsonResponse(data)
