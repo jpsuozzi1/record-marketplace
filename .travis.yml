@@ -1,0 +1,11 @@
+language: python
+
+python:
+  - 2.7.12
+
+env:
+  - DJANGO_VERSION=2.0.4
+
+install:
+  - pip install -q Django==$DJANGO_VERSION
+  - python setup.py -q install
