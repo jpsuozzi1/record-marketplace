@@ -17,6 +17,7 @@ env:
 
 install:
   - pip install -q django==$DJANGO
+  - pip install -q -r requirements.txt
 
 before_script:
   - mysql -e 'create database travis_ci_db;'
