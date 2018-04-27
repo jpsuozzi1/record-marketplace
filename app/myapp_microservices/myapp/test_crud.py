@@ -1,3 +1,4 @@
+import django.test
 from django.test import TestCase, Client, TransactionTestCase
 import datetime
 from myapp.models import User, Artist, Record, Song, Listing
