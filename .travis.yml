@@ -7,10 +7,20 @@ services:
   - mysql
 
 env:
-  - DJANGO=1.10 DB=mysql
+  global:
+    - DJANGO_SETTINGS_MODULE="my_site.settings"
+    - PYTHONPATH="/home/travis/build/joshmgross/record-marketplace"
+    - PIP_USE_MIRRORS=true
+    - BUILD_ON_TRAVIS=true
+  matrix:
+    - DJANGO=1.10 DB=mysql
 
 install:
   - pip install -q django==$DJANGO
+
+before_script:
+  - mysql -e 'create database travis_ci_db;'
+  - python app/myapp_microservices/manage.py syncdb --noinput
 
 script:
   - python app/myapp_microservices/manage.py test
