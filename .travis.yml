@@ -7,10 +7,10 @@ services:
   - mysql
 
 env:
-  - DJANGO=1.10
+  - DJANGO=1.10 DB=mysql
 
 install:
-  - pip install django==$DJANGO --quiet
-  
+  - pip install -q django==$DJANGO
+
 script:
   - python app/myapp_microservices/manage.py test
