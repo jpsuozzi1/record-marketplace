@@ -9,5 +9,8 @@ services:
 env:
   - DJANGO=1.10
 
+install:
+  - pip install django==$DJANGO --quiet
+  
 script:
   - python app/myapp_microservices/manage.py test
