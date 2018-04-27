@@ -4,4 +4,4 @@ python:
   - 2.7.12
 
 script:
-  - python /app/myapp_microservices/manage.py test
+  - python record-marketplace/app/myapp_microservices/manage.py test
