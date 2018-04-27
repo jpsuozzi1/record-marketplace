@@ -8,6 +8,7 @@ services:
 
 env:
   global:
+    - DJANGO_SETTINGS_MODULE="myapp_microservices.settings"
     - PYTHONPATH="/home/travis/build/joshmgross/record-marketplace"
     - PIP_USE_MIRRORS=true
     - BUILD_ON_TRAVIS=true
