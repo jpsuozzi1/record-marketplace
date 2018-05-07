@@ -18,10 +18,16 @@ env:
 install:
   - pip install -q django==$DJANGO
   - pip install -q -r requirements.txt
+  #pull the db image
+  #Start it up
 
 before_script:
   - mysql -e 'create database travis_ci_db;'
   - python app/myapp_microservices/manage.py syncdb --noinput
+  - docker-compose up -d
 
 script:
   - python app/myapp_microservices/manage.py test
+
+after_script:
+  - docker-compose down
