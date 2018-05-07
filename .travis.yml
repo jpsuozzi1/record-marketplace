@@ -39,7 +39,7 @@ script:
 # Execute the tests
   - > 
     docker exec -it recordmarketplace_models_1 bash -c
-    "python /app/myapp_microservices/manage.py test --noinput"
+    "python /app/myapp_microservices/manage.py test"
 
 
 after_script:
