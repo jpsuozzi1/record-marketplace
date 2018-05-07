@@ -1,0 +1,51 @@
+sudo: required
+dist: trusty
+
+language: python
+
+python:
+  - 2.7.12
+
+services:
+  - docker
+  - mysql
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.21.0
+
+install:
+# Get the latest version of mysql
+  - docker pull mysql:5.7.14
+# Make a directory on Travis to house our container
+  - mkdir db
+# Start up our mysql container and give it 15 seconds to start
+  - >
+    docker run --name mysql -d -e MYSQL\_ROOT\_PASSWORD='$3cureUS' -v /db:/var/lib/mysql  mysql:5.7.14
+  - sleep 15
+# Set all the necessary attributes of our database
+#   CREATE DATABASE test_cs4501 CHARACTER SET utf8;
+  - >  
+    docker run -it --name mysql-cmdline --link mysql:db mysql:5.7.14
+    mysql -uroot -p'$3cureUS' -h db -v -e
+    "CREATE DATABASE cs4501 CHARACTER SET utf8;
+    CREATE USER 'www'@'%' IDENTIFIED BY '\$3cureUS';
+    GRANT ALL PRIVILEGES ON *.* TO 'www'@'%';"
+    
+before_script:
+# Run our docker-compose command
+  - docker-compose up -d
+
+script:
+# Execute the tests
+  - > 
+    docker exec -it recordmarketplace_models_1 bash -c
+    "cd /app/myapp_microservices && python manage.py test"
+
+
+after_script:
+# Remove the various images and containers we created 
+  - docker-compose down
+  - docker stop mysql
+  - docker rm `docker ps -a -q`
+  - docker rmi `docker images -q`
+  - rm -rf db
