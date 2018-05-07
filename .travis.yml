@@ -33,7 +33,7 @@ before_script:
 script:
   - > 
     docker exec -it recordmarketplace_models_1 bash -c
-    "python /app/myapp_microservices/manage.py test --noinput"
+    "python manage.py test --noinput"
 
 after_script:
   - docker-compose down
