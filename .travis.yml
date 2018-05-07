@@ -10,7 +10,7 @@ env:
   DOCKER_COMPOSE_VERSION: 1.21.0
 
 install:
-  - pip install -q django==$DJANGO
+  - pip install -q django==1.10
   - pip install -q -r requirements.txt
   - docker pull mysql:5.7.14
   - mkdir db
