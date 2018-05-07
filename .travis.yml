@@ -7,27 +7,29 @@ services:
   - mysql
 
 env:
-  global:
-    - DJANGO_SETTINGS_MODULE="myapp_microservices.settings"
-    - PYTHONPATH="/home/travis/build/joshmgross/record-marketplace"
-    - PIP_USE_MIRRORS=true
-    - BUILD_ON_TRAVIS=true
-  matrix:
-    - DJANGO=1.10 DB=mysql
+  DOCKER_COMPOSE_VERSION: 1.21.0
 
 install:
   - pip install -q django==$DJANGO
   - pip install -q -r requirements.txt
-  #pull the db image
-  #Start it up
+  - docker pull mysql:5.7.14
+  - mkdir db
+  - docker run --name mysql -d -e MYSQL\_ROOT\_PASSWORD='$3cureUS' -v ~/cs4501/db:/var/lib/mysql  mysql:5.7.14
+  - sleep 40
+  - >
+    docker run -it --name mysql-cmdline --link mysql:db mysql:5.7.14 bash
+    mysql -uroot -p'$3cureUS' -h db -v -e
+    "create user 'www'@'%' identified by '$3cureUS';
+    create database cs4501 character set utf8;
+    grant all on *.* to 'www'@'%'; "
 
 before_script:
-  # - mysql -e 'create database travis_ci_db;'
-  # - python app/myapp_microservices/manage.py syncdb --noinput
   - docker-compose up -d
 
 script:
-  - python app/myapp_microservices/manage.py test
+  - > 
+    docker exec -it models_1 bash -c
+    "python app/myapp_microservices/manage.py test"
 
 after_script:
   - docker-compose down
