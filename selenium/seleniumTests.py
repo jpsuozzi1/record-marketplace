@@ -18,7 +18,7 @@ class MyTests(unittest.TestCase):
 		driver = self.driver
 
 		# go to home page
-		driver.get("http://recordmarketplace_web_1:8000/home/")
+		driver.get("http://web:8000/home/")
 
 		# find elements containing two listings
 		listing0 = driver.find_element_by_id('listing0')
@@ -52,7 +52,7 @@ class MyTests(unittest.TestCase):
 
 	def test_create_account(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/createAccount/")
+		driver.get("http://web:8000/createAccount/")
 		form = driver.find_element_by_id('createAccountForm')
 		first_name = form.find_element_by_id('id_first_name')
 		last_name = form.find_element_by_id('id_last_name')
@@ -68,7 +68,7 @@ class MyTests(unittest.TestCase):
 
 	def test_create_account_with_unavailable_email(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/createAccount/")
+		driver.get("http://web:8000/createAccount/")
 		form = driver.find_element_by_id('createAccountForm')
 		first_name = form.find_element_by_id('id_first_name')
 		last_name = form.find_element_by_id('id_last_name')
@@ -84,7 +84,7 @@ class MyTests(unittest.TestCase):
 
 	def test_succesful_login(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/login/")
+		driver.get("http://web:8000/login/")
 		form = driver.find_element_by_id('loginForm')
 		email = form.find_element_by_id('id_email')
 		password = form.find_element_by_id('id_password')
@@ -95,7 +95,7 @@ class MyTests(unittest.TestCase):
 	
 	def test_unsuccessful_login(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/login/")
+		driver.get("http://web:8000/login/")
 		form = driver.find_element_by_id('loginForm')
 		email = form.find_element_by_id('id_email')
 		password = form.find_element_by_id('id_password')
@@ -106,12 +106,12 @@ class MyTests(unittest.TestCase):
 
 	def test_create_listing_not_logged_in(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/createListing/")
+		driver.get("http://web:8000/createListing/")
 		assert("You must be logged in to create a listing" in driver.page_source)
 
 	def test_already_logged_in(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/login/")
+		driver.get("http://web:8000/login/")
 		form = driver.find_element_by_id('loginForm')
 		email = form.find_element_by_id('id_email')
 		password = form.find_element_by_id('id_password')
@@ -119,37 +119,37 @@ class MyTests(unittest.TestCase):
 		password.send_keys("password")
 		email.submit()
 		assert("Home Page" in driver.page_source)
-		driver.get("http://recordmarketplace_web_1:8000/login/")
+		driver.get("http://web:8000/login/")
 		assert("You are already logged in." in driver.page_source)
 
 	def test_log_out(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/login/")
+		driver.get("http://web:8000/login/")
 		form = driver.find_element_by_id('loginForm')
 		email = form.find_element_by_id('id_email')
 		password = form.find_element_by_id('id_password')
 		email.send_keys("jps4nf@virginia.edu")
 		password.send_keys("password")
 		email.submit()
-		driver.get("http://recordmarketplace_web_1:8000/logout/")
+		driver.get("http://web:8000/logout/")
 		assert("Successfully logged out!" in driver.page_source)
 
 	def test_already_logged_out(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/login/")
+		driver.get("http://web:8000/login/")
 		form = driver.find_element_by_id('loginForm')
 		email = form.find_element_by_id('id_email')
 		password = form.find_element_by_id('id_password')
 		email.send_keys("jps4nf@virginia.edu")
 		password.send_keys("password")
 		email.submit()
-		driver.get("http://recordmarketplace_web_1:8000/logout/")
-		driver.get("http://recordmarketplace_web_1:8000/logout/")
+		driver.get("http://web:8000/logout/")
+		driver.get("http://web:8000/logout/")
 		assert("You are not logged in." in driver.page_source)
 
 	def test_create_listing_succesful(self):
 		driver = self.driver
-		driver.get("http://recordmarketplace_web_1:8000/createListing/")
+		driver.get("http://web:8000/createListing/")
 		loginForm = driver.find_element_by_id('loginForm')
 		email = loginForm.find_element_by_id('id_email')
 		password = loginForm.find_element_by_id('id_password')
@@ -157,7 +157,7 @@ class MyTests(unittest.TestCase):
 		password.send_keys("password")
 		email.submit()
 
-		driver.get("http://recordmarketplace_web_1:8000/createListing/")
+		driver.get("http://web:8000/createListing/")
 		listingForm = driver.find_element_by_id('createListingForm')
 		price = listingForm.find_element_by_id('id_price')
 		record = listingForm.find_element_by_id('id_record')
