@@ -55,7 +55,6 @@ batch:
       - es:es
    command: bash -c "python /batch/kafkaLink.py"
 
-   -
 selenium-chrome:
   image: selenium/standalone-chrome
   container_name: selenium-chrome
