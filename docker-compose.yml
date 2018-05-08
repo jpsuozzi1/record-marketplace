@@ -71,5 +71,5 @@ selenium-test:
     - selenium-chrome:selenium-chrome
     - web:web
   volumes:
-    - ./app/selenium:/app
-  command: bash -c "pip install selenium==2.0 && python /selenium/seleniumTests.py"
+    - ./selenium:/selenium
+  command: bash -c "pip install selenium && python /selenium/seleniumTests.py"
