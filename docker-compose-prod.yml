@@ -11,6 +11,7 @@ exp:
    links:
       - models:models-api
       - kafka:kafka
+      - es:es
    volumes:
       - ./exp:/app
    command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_exp --reload-on-changes /app/myapp_exp/myapp_exp/wsgi.py"
@@ -19,7 +20,6 @@ web:
    image: tp33/django
    links:
       - exp:exp-api
-      - es:es
    ports:
       - "80:8000"
    volumes:

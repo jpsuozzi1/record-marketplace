@@ -24,7 +24,6 @@ web:
    image: tp33/django
    links:
       - exp:exp-api
-      - es:es
    ports:
       - "8003:8000"
    volumes:
@@ -56,6 +55,7 @@ batch:
       - es:es
    command: bash -c "python /batch/kafkaLink.py"
 
+   -
 selenium-chrome:
   image: selenium/standalone-chrome
   container_name: selenium-chrome
