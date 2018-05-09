@@ -24,7 +24,7 @@ install:
   - sleep 15
 # Start the haproxy container
   - >
-    docker build -t my-haproxy /haproxy
+    docker build -t my-haproxy haproxy
   - sleep 15
 # Set all the necessary attributes of our database
 #   CREATE DATABASE test_cs4501 CHARACTER SET utf8;
