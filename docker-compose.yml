@@ -73,3 +73,13 @@ selenium-test:
   volumes:
     - ./app/selenium:/app
   command: bash -c "pip install selenium==2.0 && python /selenium/seleniumTests.py"
+
+haproxy:
+  image: my-haproxy:latest
+  container_name: haproxy
+  links:
+    - web:web
+  volumes:
+    - ./haproxy:/app
+  ports:
+    - "80:8000"
