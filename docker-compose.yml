@@ -24,13 +24,31 @@ web:
    image: tp33/django
    links:
       - exp:exp-api
-      - es:es
    ports:
       - "8003:8000"
    volumes:
       - ./web:/app
    command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_web --reload-on-changes /app/myapp_web/myapp_web/wsgi.py"
 
+web2:
+   image: tp33/django
+   links:
+      - exp:exp-api
+   ports:
+      - "8004:8000"
+   volumes:
+      - ./web2:/app
+   command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_web --reload-on-changes /app/myapp_web/myapp_web/wsgi.py"
+
+web3:
+   image: tp33/django
+   links:
+      - exp:exp-api
+   ports:
+      - "8005:8000"
+   volumes:
+      - ./web3:/app
+   command: bash -c "mod_wsgi-express start-server --working-directory /app/myapp_web --reload-on-changes /app/myapp_web/myapp_web/wsgi.py"
 
 kafka:
    image: spotify/kafka
@@ -73,3 +91,16 @@ selenium-test:
   volumes:
     - ./app/selenium:/app
   command: bash -c "pip install selenium==2.0 && python /selenium/seleniumTests.py"
+
+haproxy:
+  image: my-haproxy:latest
+  container_name: haproxy
+  links:
+    - web:web
+    - web2:web2
+    - web3:web3
+  volumes:
+    - ./haproxy:/app
+  ports:
+    - "80:8000"
+

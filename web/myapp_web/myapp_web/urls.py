@@ -15,6 +15,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from myapp import views
+from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
@@ -27,4 +28,5 @@ urlpatterns = [
     url(r'^logout/$',views.logout, name='logout'),
     url(r'^createListing/$', views.createListing, name='createListing'),
     url(r'^searchResults/$',views.searchResults, name='searchResults'),
+    url(r'^$', RedirectView.as_view(url="/home/"), name='home'),
 ]

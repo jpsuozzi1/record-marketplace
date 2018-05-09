@@ -8,7 +8,7 @@
     <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
 {% endif %}
-<form method="post">
+<form id="createAccountForm" method="post">
     {{ form.as_p }}
     <button type="submit">Create Account</button>
 </form>
