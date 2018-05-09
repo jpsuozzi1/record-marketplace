@@ -24,7 +24,6 @@ web:
    image: tp33/django
    links:
       - exp:exp-api
-      - es:es
    ports:
       - "8003:8000"
    volumes:
@@ -83,3 +82,4 @@ haproxy:
     - ./haproxy:/app
   ports:
     - "80:8000"
+
