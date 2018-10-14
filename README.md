@@ -6,6 +6,12 @@
 
 2. Docker Compose
 
+If cloning repo for the first time, cd into record-marketplace/haproxy
+
+```docker build -t my-haproxy .```
+
+Then...
+
 ```docker-compose up```
 
 If something already running
