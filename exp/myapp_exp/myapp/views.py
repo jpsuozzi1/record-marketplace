@@ -105,22 +105,27 @@ def logout(request):
 def search(request):
     data = {}
     listings = []
-    esListings = es.search(index='listing_index', body={'query': {'query_string': request.POST}, 'size': 10})
-    for hit in esListings['hits']['hits']:
-        listingId = hit['_id']
-        resp = getJsonResponse("listings", listingId)
-        if resp['ok']:
+    try:
+        esListings = es.search(index='listing_index', body={'query': {'query_string': request.POST}, 'size': 10})
+        for hit in esListings['hits']['hits']:
+            listingId = hit['_id']
+            resp = getJsonResponse("listings", listingId)
+            if resp['ok']:
+                data['ok'] = True
+                listings.append(resp['data'])
+            else:
+                data['ok'] = False
+                data['listings'] = []
+                return JsonResponse(data)
+        if listings:
+            data['listings'] = getFullListings(listings)
             data['ok'] = True
-            listings.append(resp['data'])
         else:
-            data['ok'] = False
             data['listings'] = []
-            return JsonResponse(data)
-    if listings:
-        data['listings'] = getFullListings(listings)
-        data['ok'] = True
-    else:
-        data['listings'] = []
-        data['ok'] = False
+            data['ok'] = False
 
-    return JsonResponse(data)
+        return JsonResponse(data)
+    except:
+        data['ok'] = False
+        data['listings'] = []
+        return JsonResponse(data)
