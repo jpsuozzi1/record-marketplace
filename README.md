@@ -1,10 +1,12 @@
 # Docker Commands
 
-1. Start up datatbase
+1. [Create a new DB](https://github.com/jpsuozzi1/record-marketplace/wiki/Creating-a-new-DB)
+
+2. Start up datatbase
 
 ```docker start mysql```
 
-2. Docker Compose
+3. Docker Compose
 
 If cloning repo for the first time, cd into record-marketplace/haproxy
 
@@ -19,7 +21,7 @@ If something already running
 ```docker-compose rm and then docker-compose up```
 
 
-3. To access shell of docker compose container
+4. To access shell of docker compose container
 
 ```docker exec -it [name of container] bash```
 
